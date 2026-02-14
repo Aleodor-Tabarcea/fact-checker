@@ -1,161 +1,107 @@
 // main.js — RIFACTS UI Logic
 
 // DOM
-const navBack = document.getElementById('nav-back');
-const navCurrent = document.getElementById('nav-current');
-const folderList = document.getElementById('folder-list');
-const selectedBar = document.getElementById('folder-selected-bar');
-const selectedName = document.getElementById('selected-name');
-const selectedClear = document.getElementById('selected-clear');
+const folderSearch = document.getElementById('folder-search');
+const searchResults = document.getElementById('search-results');
+const selectedChip = document.getElementById('selected-chip');
+const chipName = document.getElementById('chip-name');
+const chipRemove = document.getElementById('chip-remove');
 const runBtn = document.getElementById('run-btn');
 const loader = document.getElementById('loader');
 const resultsArea = document.getElementById('results-area');
 
 // State
-let currentFolderId = 'root';
 let selectedFolderId = null;
-let selectedFolderName = null;
-let parentStack = []; // history for back navigation
+let searchTimeout = null;
 
-// ── Initialize ──
-window.addEventListener('load', () => {
-  navigateToFolder('root');
-});
+// ── Folder Search (debounced) ──
+folderSearch.addEventListener('input', () => {
+  const query = folderSearch.value.trim();
 
-// ── Folder Navigation ──
-function navigateToFolder(folderId) {
-  folderList.innerHTML = '<div class="folder-loading"><div class="mini-spinner"></div>Loading…</div>';
+  clearTimeout(searchTimeout);
 
-  if (typeof google !== 'undefined') {
-    google.script.run
-      .withSuccessHandler(renderFolders)
-      .withFailureHandler((err) => {
-        folderList.innerHTML = `<div class="folder-empty">⚠️ ${escapeHtml(err.message)}</div>`;
-      })
-      .listFolders(folderId);
-  } else {
-    // Local dev mock
-    setTimeout(() => {
-      if (folderId === 'root') {
-        renderFolders({
-          folders: [
-            { id: "f1", name: "Investigations 2024" },
-            { id: "f2", name: "Election Coverage" },
-            { id: "f3", name: "EU Funds Tracking" },
-            { id: "f4", name: "Source Documents" },
-            { id: "f5", name: "Archive" }
-          ],
-          currentId: 'root',
-          currentName: 'My Drive',
-          parentId: null,
-          hasSharedDrives: true
-        });
-      } else if (folderId === 'shared') {
-        renderFolders({
-          folders: [
-            { id: "s1", name: "OCCRP Shared Data" },
-            { id: "s2", name: "Partner Newsroom Files" }
-          ],
-          currentId: 'shared',
-          currentName: 'Shared with me',
-          parentId: 'root',
-          hasSharedDrives: false
-        });
-      } else {
-        renderFolders({
-          folders: [
-            { id: "sub1", name: "Week 1 Reports" },
-            { id: "sub2", name: "Interviews" }
-          ],
-          currentId: folderId,
-          currentName: "Subfolder",
-          parentId: 'root',
-          hasSharedDrives: false
-        });
-      }
-    }, 400);
-  }
-}
-
-function renderFolders(data) {
-  currentFolderId = data.currentId;
-  navCurrent.textContent = data.currentName;
-
-  // Back button
-  if (data.parentId) {
-    navBack.disabled = false;
-    navBack.onclick = () => {
-      navigateToFolder(data.parentId);
-    };
-  } else {
-    navBack.disabled = true;
-    navBack.onclick = null;
-  }
-
-  folderList.innerHTML = '';
-
-  // "Shared with me" entry at root level
-  if (data.hasSharedDrives) {
-    const sharedItem = createFolderItem({ id: 'shared', name: 'Shared with me' }, '👥', true);
-    folderList.appendChild(sharedItem);
-  }
-
-  if (data.folders.length === 0 && !data.hasSharedDrives) {
-    folderList.innerHTML = '<div class="folder-empty">No subfolders here</div>';
-
-    // Auto-select current folder if no subfolders — this IS the evidence folder
-    if (currentFolderId !== 'root' && currentFolderId !== 'shared') {
-      selectFolder(currentFolderId, data.currentName);
-    }
+  if (query.length < 2) {
+    searchResults.innerHTML = '<div class="search-hint">Type at least 2 characters to search</div>';
+    searchResults.classList.add('active');
     return;
   }
 
-  data.folders.forEach(folder => {
-    const item = createFolderItem(folder, '📁', true);
-    folderList.appendChild(item);
-  });
+  searchResults.innerHTML = '<div class="search-loading"><div class="mini-spinner"></div>Searching…</div>';
+  searchResults.classList.add('active');
 
-  // If we're inside a specific folder (not root/shared), allow selecting it
-  if (currentFolderId !== 'root' && currentFolderId !== 'shared') {
-    selectFolder(currentFolderId, data.currentName);
+  searchTimeout = setTimeout(() => {
+    if (typeof google !== 'undefined') {
+      google.script.run
+        .withSuccessHandler(renderSearchResults)
+        .withFailureHandler((err) => {
+          searchResults.innerHTML = `<div class="search-hint">⚠️ ${escapeHtml(err.message)}</div>`;
+        })
+        .searchFolders(query);
+    } else {
+      // Local dev mock
+      setTimeout(() => {
+        const mockFolders = [
+          { id: "f1", name: "Investigations 2024", shared: false },
+          { id: "f2", name: "Election Investigation Files", shared: true },
+          { id: "f3", name: "EU Funds Investigation", shared: false }
+        ].filter(f => f.name.toLowerCase().includes(query.toLowerCase()));
+        renderSearchResults(mockFolders);
+      }, 300);
+    }
+  }, 350); // 350ms debounce
+});
+
+folderSearch.addEventListener('focus', () => {
+  if (folderSearch.value.trim().length >= 2 || searchResults.querySelector('.search-item')) {
+    searchResults.classList.add('active');
   }
-}
+});
 
-function createFolderItem(folder, icon, navigable) {
-  const item = document.createElement('div');
-  item.className = 'folder-item';
-  if (folder.id === selectedFolderId) item.classList.add('selected');
+// Close results when clicking outside
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#folder-section')) {
+    searchResults.classList.remove('active');
+  }
+});
 
-  item.innerHTML = `
-    <span class="folder-icon">${icon}</span>
-    <span class="folder-name">${escapeHtml(folder.name)}</span>
-    <span class="folder-arrow">›</span>
-  `;
+function renderSearchResults(folders) {
+  searchResults.innerHTML = '';
 
-  item.addEventListener('click', () => {
-    navigateToFolder(folder.id);
+  if (!folders || folders.length === 0) {
+    searchResults.innerHTML = '<div class="search-hint">No folders found</div>';
+    searchResults.classList.add('active');
+    return;
+  }
+
+  folders.forEach(folder => {
+    const item = document.createElement('div');
+    item.className = 'search-item';
+    item.innerHTML = `
+      <span class="search-item-icon">${folder.shared ? '👥' : '📁'}</span>
+      <span class="search-item-name">${escapeHtml(folder.name)}</span>
+    `;
+    item.addEventListener('click', () => selectFolder(folder.id, folder.name));
+    searchResults.appendChild(item);
   });
 
-  return item;
+  searchResults.classList.add('active');
 }
 
+// ── Folder Selection ──
 function selectFolder(id, name) {
   selectedFolderId = id;
-  selectedFolderName = name;
-  selectedName.textContent = name;
-  selectedBar.classList.add('active');
+  chipName.textContent = name;
+  selectedChip.classList.add('active');
+  searchResults.classList.remove('active');
+  folderSearch.value = '';
   runBtn.disabled = false;
-
-  // Highlight selected in list
-  document.querySelectorAll('.folder-item').forEach(el => el.classList.remove('selected'));
 }
 
-selectedClear.addEventListener('click', () => {
+chipRemove.addEventListener('click', () => {
   selectedFolderId = null;
-  selectedFolderName = null;
-  selectedBar.classList.remove('active');
+  selectedChip.classList.remove('active');
   runBtn.disabled = true;
-  document.querySelectorAll('.folder-item').forEach(el => el.classList.remove('selected'));
+  folderSearch.focus();
 });
 
 // ── Fact Check Execution ──
@@ -245,21 +191,36 @@ function renderResults(data) {
       .sort((a, b) => b.score - a.score)
       .forEach((item, i) => {
         const variant = item.score > 80 ? 'positive' : item.score > 50 ? 'warning' : 'negative';
+        const sourceLink = item.doc_url
+          ? `<a href="${escapeHtml(item.doc_url)}" target="_blank" class="card-link">View source ↗</a>`
+          : '';
 
-        resultsArea.insertAdjacentHTML('beforeend', `
-          <div class="score-card" style="animation-delay: ${i * 0.08}s">
-            <div class="card-top">
-              <div class="card-title">${escapeHtml(item.doc_title)}</div>
-              <span class="score-badge ${variant}">${item.score}%</span>
+        const card = document.createElement('div');
+        card.className = 'score-card';
+        card.style.animationDelay = `${i * 0.06}s`;
+        card.innerHTML = `
+          <div class="card-header">
+            <span class="card-expand">▶</span>
+            <div class="card-title">${escapeHtml(item.doc_title)}</div>
+            <span class="score-badge ${variant}">${item.score}%</span>
+          </div>
+          <div class="card-body">
+            <div class="card-body-inner">
+              <div class="card-snippet">
+                <blockquote>"${escapeHtml(item.snippet)}"</blockquote>
+              </div>
+              <div class="card-footer">
+                <span class="card-location">📍 ${escapeHtml(item.location)}</span>
+                ${sourceLink}
+              </div>
             </div>
-            <div class="card-snippet">
-              <blockquote>"${escapeHtml(item.snippet)}"</blockquote>
-            </div>
-            <div class="card-footer">
-              <span class="card-location">📍 ${escapeHtml(item.location)}</span>
-              <a href="${escapeHtml(item.doc_url)}" target="_blank" class="card-link">View source ↗</a>
-            </div>
-          </div>`);
+          </div>`;
+
+        card.querySelector('.card-header').addEventListener('click', () => {
+          card.classList.toggle('open');
+        });
+
+        resultsArea.appendChild(card);
       });
   }
 }

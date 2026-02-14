@@ -4,7 +4,7 @@
     "enabledAdvancedServices": [
       {
         "userSymbol": "DriveAPIConnector",
-        "version": "v3",
+        "version": "v2",
         "serviceId": "drive"
       },
       {
@@ -27,6 +27,7 @@
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/youtube.readonly",
     "https://www.googleapis.com/auth/youtube.force-ssl",
-    "https://www.googleapis.com/auth/script.container.ui"
+    "https://www.googleapis.com/auth/script.container.ui",
+    "https://www.googleapis.com/auth/script.external_request"
   ]
 }

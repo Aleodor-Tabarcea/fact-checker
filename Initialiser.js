@@ -28,6 +28,16 @@ function performFactCheck(folderId) {
 
     const analysis = callGeminiMultimodal(claim, driveData.evidence);
 
+    // Post-process: inject real Drive URLs (Gemini can't know them)
+    const urlMap = {};
+    driveData.evidence.forEach(e => { urlMap[e.title] = e.url; });
+
+    if (Array.isArray(analysis)) {
+      analysis.forEach(item => {
+        item.doc_url = urlMap[item.doc_title] || "";
+      });
+    }
+
     return {
       status: "success",
       analysis: analysis,
