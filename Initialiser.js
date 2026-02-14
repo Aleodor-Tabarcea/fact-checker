@@ -1,18 +1,18 @@
 /**
- * INIT.GS - App entry point and React UI server.
+ * INIT.GS - App entry point and RIFACTS UI server.
  */
 
 function onOpen(e) {
   DocumentApp.getUi()
     .createAddonMenu()
-    .addItem('🕵️‍♂️ Fact Check', 'showSidebar')
+    .addItem('🔍 RIFACTS', 'showSidebar')
     .addToUi();
 }
 
 function showSidebar() {
   const ui = HtmlService.createHtmlOutputFromFile('sidebar')
-    .setTitle('AI Fact Checker')
-    .setWidth(300);
+    .setTitle('RIFACTS')
+    .setWidth(320);
   DocumentApp.getUi().showSidebar(ui);
 }
 

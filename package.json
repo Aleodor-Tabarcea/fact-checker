@@ -11,8 +11,5 @@
   "devDependencies": {
     "vite": "^7.3.1",
     "vite-plugin-singlefile": "^2.3.0"
-  },
-  "dependencies": {
-    "@spectrum-web-components/bundle": "^1.11.2"
   }
 }
