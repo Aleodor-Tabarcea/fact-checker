@@ -1,4 +1,9 @@
 **/**
-!*.js
+!Initialiser.js
+!DocumentService.js
+!DriveService.js
+!SheetService.js
+!YouTubeService.js
+!GeminiService.js
 !appsscript.json
 !sidebar.html
