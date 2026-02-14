@@ -1,0 +1,18 @@
+{
+  "name": "fact-checker-ui",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "deploy": "npm run build && cp dist/index.html sidebar.html && npx @google/clasp push"
+  },
+  "devDependencies": {
+    "vite": "^7.3.1",
+    "vite-plugin-singlefile": "^2.3.0"
+  },
+  "dependencies": {
+    "@spectrum-web-components/bundle": "^1.11.2"
+  }
+}

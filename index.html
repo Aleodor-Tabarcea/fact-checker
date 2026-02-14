@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>AI Fact Checker</title>
+    <style>
+      body { margin: 0; padding: 12px; background-color: #F4F4F4; }
+      .container { display: flex; flex-direction: column; gap: 16px; }
+      #results-area { display: flex; flex-direction: column; gap: 12px; margin-top: 16px;}
+      .loader-container { display: none; align-items: center; justify-content: center; padding: 20px; flex-direction: column; gap: 10px;}
+    </style>
+  </head>
+  <body>
+    <sp-theme theme="spectrum" color="light" scale="medium">
+      <div class="container">
+        
+        <div style="display: flex; flex-direction: column;">
+          <sp-field-label for="folder-picker">1. Source Context</sp-field-label>
+          <sp-picker id="folder-picker" label="Select a Drive Folder" style="width: 100%;">
+            <sp-menu-item value="loading">Loading Folders...</sp-menu-item>
+          </sp-picker>
+        </div>
+
+        <sp-button id="run-btn" variant="accent" style="width: 100%;">
+          Run AI Analysis
+        </sp-button>
+
+        <div id="loader" class="loader-container">
+          <sp-progress-circle indeterminate></sp-progress-circle>
+          <sp-field-label>Analyzing multimodal context...</sp-field-label>
+        </div>
+
+        <div id="results-area"></div>
+      </div>
+    </sp-theme>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
