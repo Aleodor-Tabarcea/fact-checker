@@ -1,52 +1,167 @@
 // main.js — RIFACTS UI Logic
 
-// State & DOM
-const folderPicker = document.getElementById('folder-picker');
+// DOM
+const navBack = document.getElementById('nav-back');
+const navCurrent = document.getElementById('nav-current');
+const folderList = document.getElementById('folder-list');
+const selectedBar = document.getElementById('folder-selected-bar');
+const selectedName = document.getElementById('selected-name');
+const selectedClear = document.getElementById('selected-clear');
 const runBtn = document.getElementById('run-btn');
 const loader = document.getElementById('loader');
 const resultsArea = document.getElementById('results-area');
 
-// Initialize
+// State
+let currentFolderId = 'root';
+let selectedFolderId = null;
+let selectedFolderName = null;
+let parentStack = []; // history for back navigation
+
+// ── Initialize ──
 window.addEventListener('load', () => {
-  if (typeof google !== 'undefined') {
-    google.script.run
-      .withSuccessHandler(populateFolders)
-      .withFailureHandler(() => {
-        folderPicker.innerHTML = '<option value="" disabled selected>⚠️ Failed to load folders</option>';
-      })
-      .getUserFolders();
-  } else {
-    // Local dev mock
-    populateFolders([
-      { id: "123", name: "⭐ Q3 Investigations" },
-      { id: "456", name: "⭐ Election Coverage" }
-    ]);
-  }
+  navigateToFolder('root');
 });
 
-function populateFolders(folders) {
-  folderPicker.innerHTML = '';
+// ── Folder Navigation ──
+function navigateToFolder(folderId) {
+  folderList.innerHTML = '<div class="folder-loading"><div class="mini-spinner"></div>Loading…</div>';
 
-  if (!folders || folders.length === 0) {
-    folderPicker.innerHTML = '<option value="" disabled selected>No starred folders found</option>';
+  if (typeof google !== 'undefined') {
+    google.script.run
+      .withSuccessHandler(renderFolders)
+      .withFailureHandler((err) => {
+        folderList.innerHTML = `<div class="folder-empty">⚠️ ${escapeHtml(err.message)}</div>`;
+      })
+      .listFolders(folderId);
+  } else {
+    // Local dev mock
+    setTimeout(() => {
+      if (folderId === 'root') {
+        renderFolders({
+          folders: [
+            { id: "f1", name: "Investigations 2024" },
+            { id: "f2", name: "Election Coverage" },
+            { id: "f3", name: "EU Funds Tracking" },
+            { id: "f4", name: "Source Documents" },
+            { id: "f5", name: "Archive" }
+          ],
+          currentId: 'root',
+          currentName: 'My Drive',
+          parentId: null,
+          hasSharedDrives: true
+        });
+      } else if (folderId === 'shared') {
+        renderFolders({
+          folders: [
+            { id: "s1", name: "OCCRP Shared Data" },
+            { id: "s2", name: "Partner Newsroom Files" }
+          ],
+          currentId: 'shared',
+          currentName: 'Shared with me',
+          parentId: 'root',
+          hasSharedDrives: false
+        });
+      } else {
+        renderFolders({
+          folders: [
+            { id: "sub1", name: "Week 1 Reports" },
+            { id: "sub2", name: "Interviews" }
+          ],
+          currentId: folderId,
+          currentName: "Subfolder",
+          parentId: 'root',
+          hasSharedDrives: false
+        });
+      }
+    }, 400);
+  }
+}
+
+function renderFolders(data) {
+  currentFolderId = data.currentId;
+  navCurrent.textContent = data.currentName;
+
+  // Back button
+  if (data.parentId) {
+    navBack.disabled = false;
+    navBack.onclick = () => {
+      navigateToFolder(data.parentId);
+    };
+  } else {
+    navBack.disabled = true;
+    navBack.onclick = null;
+  }
+
+  folderList.innerHTML = '';
+
+  // "Shared with me" entry at root level
+  if (data.hasSharedDrives) {
+    const sharedItem = createFolderItem({ id: 'shared', name: 'Shared with me' }, '👥', true);
+    folderList.appendChild(sharedItem);
+  }
+
+  if (data.folders.length === 0 && !data.hasSharedDrives) {
+    folderList.innerHTML = '<div class="folder-empty">No subfolders here</div>';
+
+    // Auto-select current folder if no subfolders — this IS the evidence folder
+    if (currentFolderId !== 'root' && currentFolderId !== 'shared') {
+      selectFolder(currentFolderId, data.currentName);
+    }
     return;
   }
 
-  folders.forEach((f, i) => {
-    const opt = document.createElement('option');
-    opt.value = f.id;
-    opt.textContent = f.name;
-    if (i === 0) opt.selected = true;
-    folderPicker.appendChild(opt);
+  data.folders.forEach(folder => {
+    const item = createFolderItem(folder, '📁', true);
+    folderList.appendChild(item);
   });
+
+  // If we're inside a specific folder (not root/shared), allow selecting it
+  if (currentFolderId !== 'root' && currentFolderId !== 'shared') {
+    selectFolder(currentFolderId, data.currentName);
+  }
 }
 
-// Execution
-runBtn.addEventListener('click', () => {
-  const selectedId = folderPicker.value;
-  if (!selectedId || selectedId === 'loading') return;
+function createFolderItem(folder, icon, navigable) {
+  const item = document.createElement('div');
+  item.className = 'folder-item';
+  if (folder.id === selectedFolderId) item.classList.add('selected');
 
-  // UI → Loading
+  item.innerHTML = `
+    <span class="folder-icon">${icon}</span>
+    <span class="folder-name">${escapeHtml(folder.name)}</span>
+    <span class="folder-arrow">›</span>
+  `;
+
+  item.addEventListener('click', () => {
+    navigateToFolder(folder.id);
+  });
+
+  return item;
+}
+
+function selectFolder(id, name) {
+  selectedFolderId = id;
+  selectedFolderName = name;
+  selectedName.textContent = name;
+  selectedBar.classList.add('active');
+  runBtn.disabled = false;
+
+  // Highlight selected in list
+  document.querySelectorAll('.folder-item').forEach(el => el.classList.remove('selected'));
+}
+
+selectedClear.addEventListener('click', () => {
+  selectedFolderId = null;
+  selectedFolderName = null;
+  selectedBar.classList.remove('active');
+  runBtn.disabled = true;
+  document.querySelectorAll('.folder-item').forEach(el => el.classList.remove('selected'));
+});
+
+// ── Fact Check Execution ──
+runBtn.addEventListener('click', () => {
+  if (!selectedFolderId) return;
+
   runBtn.disabled = true;
   runBtn.textContent = 'Analyzing…';
   resultsArea.innerHTML = '';
@@ -59,9 +174,8 @@ runBtn.addEventListener('click', () => {
         resetUI();
         renderError(err.message || 'An unexpected error occurred.');
       })
-      .performFactCheck(selectedId);
+      .performFactCheck(selectedFolderId);
   } else {
-    // Local dev mock
     setTimeout(() => renderResults({
       status: "success",
       scanned: ["📄 Investigation Notes", "📊 Budget Data", "📑 Ministry Report.pdf"],
@@ -80,7 +194,7 @@ function resetUI() {
   runBtn.textContent = 'Verify Selected Claim';
 }
 
-// Render
+// ── Render Results ──
 function renderResults(data) {
   resetUI();
 
@@ -99,7 +213,6 @@ function renderResults(data) {
     return;
   }
 
-  // Scanned files summary
   if (data.scanned && data.scanned.length > 0) {
     const chips = data.scanned.map(f => `<span class="scanned-chip">${escapeHtml(f)}</span>`).join('');
     resultsArea.innerHTML += `
@@ -109,7 +222,6 @@ function renderResults(data) {
       </div>`;
   }
 
-  // Score cards
   if (data.analysis && data.analysis.length > 0) {
     const relevant = data.analysis.filter(item => item.score > 0);
 
@@ -134,7 +246,7 @@ function renderResults(data) {
       .forEach((item, i) => {
         const variant = item.score > 80 ? 'positive' : item.score > 50 ? 'warning' : 'negative';
 
-        const card = `
+        resultsArea.insertAdjacentHTML('beforeend', `
           <div class="score-card" style="animation-delay: ${i * 0.08}s">
             <div class="card-top">
               <div class="card-title">${escapeHtml(item.doc_title)}</div>
@@ -145,13 +257,9 @@ function renderResults(data) {
             </div>
             <div class="card-footer">
               <span class="card-location">📍 ${escapeHtml(item.location)}</span>
-              <a href="${escapeHtml(item.doc_url)}" target="_blank" class="card-link">
-                View source ↗
-              </a>
+              <a href="${escapeHtml(item.doc_url)}" target="_blank" class="card-link">View source ↗</a>
             </div>
-          </div>`;
-
-        resultsArea.insertAdjacentHTML('beforeend', card);
+          </div>`);
       });
   }
 }

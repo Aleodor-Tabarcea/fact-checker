@@ -24,7 +24,6 @@
       --ri-negative-bg: #FEF2F2;
       --ri-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
       --ri-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-      --ri-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
       --ri-radius: 10px;
       --ri-radius-sm: 6px;
     }
@@ -40,7 +39,6 @@
       background: var(--ri-bg);
       color: var(--ri-text);
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
     .app {
@@ -48,7 +46,7 @@
       flex-direction: column;
       min-height: 100vh;
       padding: 16px;
-      gap: 16px;
+      gap: 14px;
     }
 
     /* ── Brand Header ── */
@@ -100,12 +98,12 @@
       text-transform: uppercase;
     }
 
-    /* ── Sections ── */
+    /* ── Section ── */
     .section {
       background: var(--ri-surface);
       border: 1px solid var(--ri-border);
       border-radius: var(--ri-radius);
-      padding: 16px;
+      overflow: hidden;
       box-shadow: var(--ri-shadow-sm);
     }
 
@@ -115,7 +113,7 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       color: var(--ri-text-secondary);
-      margin-bottom: 10px;
+      padding: 12px 14px 0;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -129,33 +127,179 @@
       border-radius: 2px;
     }
 
-    /* ── Folder Picker ── */
-    .folder-select {
-      width: 100%;
-      padding: 10px 12px;
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
+    /* ── Folder Browser ── */
+    .folder-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--ri-border);
+      min-height: 40px;
+    }
+
+    .nav-back {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--ri-border);
+      background: var(--ri-bg);
+      border-radius: var(--ri-radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--ri-text-secondary);
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .nav-back:hover {
+      background: var(--ri-border);
+      color: var(--ri-text);
+    }
+
+    .nav-back:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .nav-back:disabled:hover {
+      background: var(--ri-bg);
+      color: var(--ri-text-secondary);
+    }
+
+    .nav-current {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ri-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+
+    .folder-list {
+      max-height: 200px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--ri-border) transparent;
+    }
+
+    .folder-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      cursor: pointer;
+      transition: background 0.12s ease;
+      border-bottom: 1px solid #F1F3F5;
+    }
+
+    .folder-item:last-child {
+      border-bottom: none;
+    }
+
+    .folder-item:hover {
+      background: var(--ri-accent-light);
+    }
+
+    .folder-item.selected {
+      background: var(--ri-accent-light);
+      border-left: 3px solid var(--ri-accent);
+      padding-left: 11px;
+    }
+
+    .folder-icon {
+      font-size: 14px;
+      flex-shrink: 0;
+      width: 20px;
+      text-align: center;
+    }
+
+    .folder-name {
+      font-size: 12px;
       font-weight: 500;
       color: var(--ri-text);
-      background: var(--ri-bg);
-      border: 1.5px solid var(--ri-border);
-      border-radius: var(--ri-radius-sm);
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235F6672' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+
+    .folder-arrow {
+      font-size: 11px;
+      color: #CBD5E1;
+      flex-shrink: 0;
+      transition: color 0.12s ease;
+    }
+
+    .folder-item:hover .folder-arrow {
+      color: var(--ri-accent);
+    }
+
+    .folder-empty {
+      padding: 20px 14px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--ri-text-secondary);
+    }
+
+    .folder-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px;
+      font-size: 12px;
+      color: var(--ri-text-secondary);
+    }
+
+    .folder-loading .mini-spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--ri-border);
+      border-top-color: var(--ri-accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    .folder-selected-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: var(--ri-accent-light);
+      border-top: 1px solid #DBEAFE;
+    }
+
+    .folder-selected-bar.active {
+      display: flex;
+    }
+
+    .selected-icon {
+      font-size: 12px;
+    }
+
+    .selected-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ri-accent);
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .selected-clear {
+      font-size: 11px;
+      color: var(--ri-text-secondary);
       cursor: pointer;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: underline;
+      flex-shrink: 0;
     }
 
-    .folder-select:focus {
-      outline: none;
-      border-color: var(--ri-accent);
-      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.12);
-    }
-
-    .folder-select:hover {
-      border-color: #CBD5E1;
+    .selected-clear:hover {
+      color: var(--ri-text);
     }
 
     /* ── Run Button ── */
@@ -173,17 +317,6 @@
       cursor: pointer;
       transition: all 0.2s ease;
       box-shadow: 0 2px 8px rgba(29, 78, 216, 0.3);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .run-btn::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
-      opacity: 0;
-      transition: opacity 0.2s ease;
     }
 
     .run-btn:hover:not(:disabled) {
@@ -191,16 +324,12 @@
       box-shadow: 0 4px 16px rgba(29, 78, 216, 0.4);
     }
 
-    .run-btn:hover:not(:disabled)::after {
-      opacity: 1;
-    }
-
     .run-btn:active:not(:disabled) {
       transform: translateY(0);
     }
 
     .run-btn:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
       transform: none;
     }
@@ -332,7 +461,6 @@
       border-radius: 20px;
       font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.2px;
     }
 
     .score-badge.positive {
@@ -352,7 +480,6 @@
 
     .card-snippet {
       padding: 0 14px;
-      margin: 0;
     }
 
     .card-snippet blockquote {
@@ -389,9 +516,6 @@
       font-weight: 600;
       color: var(--ri-accent);
       text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 3px;
       transition: color 0.15s ease;
     }
 
@@ -399,7 +523,7 @@
       color: var(--ri-accent-hover);
     }
 
-    /* ── Empty / Error States ── */
+    /* ── States ── */
     .state-message {
       display: flex;
       flex-direction: column;
@@ -429,7 +553,7 @@
       line-height: 1.4;
     }
 
-    /* ── Scanned files ── */
+    /* ── Scanned ── */
     .scanned-section {
       margin-top: 4px;
     }
@@ -477,16 +601,27 @@
       </div>
     </div>
 
-    <!-- Source Selection -->
-    <div class="section">
+    <!-- Folder Browser -->
+    <div class="section" id="folder-browser">
       <div class="section-label">Evidence Source</div>
-      <select id="folder-picker" class="folder-select">
-        <option value="loading" disabled selected>Loading folders…</option>
-      </select>
+      <div class="folder-nav">
+        <button id="nav-back" class="nav-back" disabled title="Go back">←</button>
+        <span id="nav-current" class="nav-current">My Drive</span>
+      </div>
+      <div id="folder-list" class="folder-list">
+        <div class="folder-loading">
+          <div class="mini-spinner"></div>Loading folders…
+        </div>
+      </div>
+      <div id="folder-selected-bar" class="folder-selected-bar">
+        <span class="selected-icon">✓</span>
+        <span id="selected-name" class="selected-name"></span>
+        <span id="selected-clear" class="selected-clear">clear</span>
+      </div>
     </div>
 
     <!-- Action -->
-    <button id="run-btn" class="run-btn">
+    <button id="run-btn" class="run-btn" disabled>
       Verify Selected Claim
     </button>
 
