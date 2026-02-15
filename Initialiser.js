@@ -1,6 +1,22 @@
 /**
- * INIT.GS - App entry point and RIFACTS UI server.
+ * INIT.GS - App entry point, RIFACTS UI server, and user settings.
  */
+
+// ── API Key Management (per-user) ──
+function saveApiKey(key) {
+  if (!key || key.trim().length < 10) throw new Error('Please enter a valid API key.');
+  PropertiesService.getUserProperties().setProperty('GEMINI_API_KEY', key.trim());
+  return { success: true };
+}
+
+function getApiKey() {
+  return PropertiesService.getUserProperties().getProperty('GEMINI_API_KEY') || '';
+}
+
+function hasApiKey() {
+  const key = PropertiesService.getUserProperties().getProperty('GEMINI_API_KEY');
+  return !!(key && key.length > 0);
+}
 
 function onOpen(e) {
   DocumentApp.getUi()
