@@ -47,7 +47,10 @@ function performFactCheck(folderId, ytUrls) {
     if (ytUrls && ytUrls.length > 0) {
       ytUrls.forEach(url => {
         try {
+          console.log("🎬 Processing YouTube URL: " + url);
           const hydrated = hydrateYouTubeContext(url);
+          console.log("🎬 Hydrated content length: " + (hydrated ? hydrated.length : 0));
+          console.log("🎬 Hydrated content (first 2000 chars): " + (hydrated ? hydrated.substring(0, 2000) : "(empty)"));
           if (hydrated && hydrated.length > 20) {
             driveData.evidence.push({
               type: "text",
@@ -56,6 +59,8 @@ function performFactCheck(folderId, ytUrls) {
               content: hydrated.substring(0, 15000)
             });
             driveData.scannedFiles.push("📺 YouTube Video");
+          } else {
+            console.warn("🎬 YouTube content too short or empty, skipping. Length: " + (hydrated ? hydrated.length : 0));
           }
         } catch (e) {
           console.warn("YouTube processing failed: " + e.message);

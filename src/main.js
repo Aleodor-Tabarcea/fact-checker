@@ -203,9 +203,16 @@ function updateRunBtn() {
 
 // ── YouTube URL Handling ──
 function extractVideoId(url) {
-  const m = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/)| youtu\.be\/)([^"&?\/\s]{11})/i)
-    || url.match(/[?&]v=([^"&?\/\s]{11})/i);
-  return m ? m[1] : null;
+  // youtu.be/ID
+  let m = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  // youtube.com/watch?v=ID
+  m = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  // youtube.com/embed/ID
+  m = url.match(/\/embed\/([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  return null;
 }
 
 ytAddBtn.addEventListener('click', addYouTubeUrl);
