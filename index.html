@@ -138,7 +138,7 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       color: var(--ri-text-secondary);
-      padding: 12px 14px 8px;
+      padding: 10px 12px 6px;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -147,7 +147,7 @@
     .section-label::before {
       content: '';
       width: 3px;
-      height: 12px;
+      height: 10px;
       background: var(--ri-accent);
       border-radius: 2px;
     }
@@ -155,14 +155,14 @@
     /* ── Folder Search ── */
     .search-wrap {
       position: relative;
-      padding: 0 14px 12px;
+      padding: 0 12px 10px;
     }
 
     .search-input {
       width: 100%;
-      padding: 10px 12px 10px 32px;
+      padding: 8px 10px 8px 30px;
       font-family: 'Inter', sans-serif;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 500;
       color: var(--ri-text);
       background: var(--ri-bg);
@@ -184,9 +184,9 @@
 
     .search-icon {
       position: absolute;
-      left: 24px;
-      top: 11px;
-      font-size: 13px;
+      left: 22px;
+      top: 9px;
+      font-size: 12px;
       color: #94A3B8;
       pointer-events: none;
     }
@@ -310,6 +310,115 @@
 
     .chip-remove:hover {
       background: rgba(29, 78, 216, 0.25);
+    }
+
+    /* ── YouTube Input ── */
+    .yt-section {
+      padding: 0 12px 10px;
+    }
+
+    .yt-label {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--ri-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .yt-input-wrap {
+      display: flex;
+      gap: 6px;
+    }
+
+    .yt-input {
+      flex: 1;
+      padding: 7px 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: var(--ri-text);
+      background: var(--ri-bg);
+      border: 1.5px solid var(--ri-border);
+      border-radius: var(--ri-radius-sm);
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .yt-input:focus {
+      border-color: #EF4444;
+    }
+
+    .yt-input::placeholder {
+      color: #94A3B8;
+    }
+
+    .yt-add {
+      padding: 7px 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: #FFF;
+      background: #EF4444;
+      border: none;
+      border-radius: var(--ri-radius-sm);
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    .yt-add:hover {
+      background: #DC2626;
+    }
+
+    .yt-chips {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .yt-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      border-radius: var(--ri-radius-sm);
+    }
+
+    .yt-chip-icon {
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .yt-chip-name {
+      font-size: 10px;
+      font-weight: 600;
+      color: #B91C1C;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .yt-chip-remove {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(185, 28, 28, 0.12);
+      color: #B91C1C;
+      font-size: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .yt-chip-remove:hover {
+      background: rgba(185, 28, 28, 0.25);
     }
 
     /* ── Run Button ── */
@@ -859,7 +968,7 @@
         <div class="section-label">Evidence Source</div>
         <div class="search-wrap">
           <span class="search-icon">🔍</span>
-          <input id="folder-search" class="search-input" type="text" placeholder="Search for a Drive folder…"
+          <input id="folder-search" class="search-input" type="text" placeholder="Search Drive folder…"
             autocomplete="off" />
         </div>
         <div id="selected-chip" class="selected-chip">
@@ -869,6 +978,14 @@
         </div>
         <div id="search-results" class="search-results">
           <div class="search-hint">Type at least 2 characters to search</div>
+        </div>
+        <div class="yt-section">
+          <div class="yt-label">📹 YouTube videos (optional)</div>
+          <div class="yt-input-wrap">
+            <input id="yt-url" class="yt-input" type="text" placeholder="Paste a YouTube URL…" />
+            <button id="yt-add" class="yt-add">Add</button>
+          </div>
+          <div id="yt-chips" class="yt-chips"></div>
         </div>
       </div>
 

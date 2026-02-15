@@ -32,19 +32,44 @@ function showSidebar() {
   DocumentApp.getUi().showSidebar(ui);
 }
 
-function performFactCheck(folderId) {
+function performFactCheck(folderId, ytUrls) {
   try {
     const claim = getSelectedText();
     if (!claim) throw new Error("Please highlight the text you want to check.");
 
-    const driveData = getFolderEvidence(folderId);
+    // Gather Drive evidence
+    let driveData = { evidence: [], scannedFiles: [] };
+    if (folderId) {
+      driveData = getFolderEvidence(folderId);
+    }
+
+    // Gather YouTube evidence
+    if (ytUrls && ytUrls.length > 0) {
+      ytUrls.forEach(url => {
+        try {
+          const hydrated = hydrateYouTubeContext(url);
+          if (hydrated && hydrated.length > 20) {
+            driveData.evidence.push({
+              type: "text",
+              title: "YouTube: " + url.substring(0, 60),
+              url: url,
+              content: hydrated.substring(0, 15000)
+            });
+            driveData.scannedFiles.push("📺 YouTube Video");
+          }
+        } catch (e) {
+          console.warn("YouTube processing failed: " + e.message);
+        }
+      });
+    }
+
     if (driveData.evidence.length === 0) {
-      return { status: "no_docs", message: "No readable text or PDFs found." };
+      return { status: "no_docs", message: "No readable evidence found." };
     }
 
     const analysis = callGeminiMultimodal(claim, driveData.evidence);
 
-    // Post-process: inject real Drive URLs (Gemini can't know them)
+    // Post-process: inject real URLs (Gemini can't know them)
     const urlMap = {};
     driveData.evidence.forEach(e => { urlMap[e.title] = e.url; });
 

@@ -23,6 +23,12 @@ const resultsArea = document.getElementById('results-area');
 let selectedFolderId = null;
 let searchTimeout = null;
 let hasKeyStored = false;
+let ytUrls = [];
+
+// DOM — YouTube
+const ytUrlInput = document.getElementById('yt-url');
+const ytAddBtn = document.getElementById('yt-add');
+const ytChips = document.getElementById('yt-chips');
 
 // ── Initialization ──
 window.addEventListener('load', () => {
@@ -187,13 +193,68 @@ function selectFolder(id, name) {
 chipRemove.addEventListener('click', () => {
   selectedFolderId = null;
   selectedChip.classList.remove('active');
-  runBtn.disabled = true;
+  updateRunBtn();
   folderSearch.focus();
 });
 
+function updateRunBtn() {
+  runBtn.disabled = !(selectedFolderId || ytUrls.length > 0);
+}
+
+// ── YouTube URL Handling ──
+function extractVideoId(url) {
+  const m = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/)| youtu\.be\/)([^"&?\/\s]{11})/i)
+    || url.match(/[?&]v=([^"&?\/\s]{11})/i);
+  return m ? m[1] : null;
+}
+
+ytAddBtn.addEventListener('click', addYouTubeUrl);
+ytUrlInput.addEventListener('keydown', e => { if (e.key === 'Enter') addYouTubeUrl(); });
+
+function addYouTubeUrl() {
+  const url = ytUrlInput.value.trim();
+  if (!url) return;
+
+  const videoId = extractVideoId(url);
+  if (!videoId) {
+    ytUrlInput.style.borderColor = '#EF4444';
+    setTimeout(() => { ytUrlInput.style.borderColor = ''; }, 1500);
+    return;
+  }
+
+  if (ytUrls.find(y => y.id === videoId)) {
+    ytUrlInput.value = '';
+    return;
+  }
+
+  ytUrls.push({ id: videoId, url: url });
+  ytUrlInput.value = '';
+  renderYtChips();
+  updateRunBtn();
+}
+
+function renderYtChips() {
+  ytChips.innerHTML = '';
+  ytUrls.forEach((yt, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'yt-chip';
+    chip.innerHTML = `
+      <span class="yt-chip-icon">▶️</span>
+      <span class="yt-chip-name">youtube.com/watch?v=${escapeHtml(yt.id)}</span>
+      <button class="yt-chip-remove">✕</button>
+    `;
+    chip.querySelector('.yt-chip-remove').addEventListener('click', () => {
+      ytUrls.splice(i, 1);
+      renderYtChips();
+      updateRunBtn();
+    });
+    ytChips.appendChild(chip);
+  });
+}
+
 // ── Fact Check ──
 runBtn.addEventListener('click', () => {
-  if (!selectedFolderId) return;
+  if (!selectedFolderId && ytUrls.length === 0) return;
   runBtn.disabled = true;
   runBtn.textContent = 'Analyzing…';
   resultsArea.innerHTML = '';
@@ -206,7 +267,7 @@ runBtn.addEventListener('click', () => {
         resetUI();
         renderError(err.message || 'An unexpected error occurred.');
       })
-      .performFactCheck(selectedFolderId);
+      .performFactCheck(selectedFolderId, ytUrls.map(y => y.url));
   } else {
     setTimeout(() => renderResults({
       status: "success",
