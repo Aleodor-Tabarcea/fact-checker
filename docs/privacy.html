@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy Policy — RIFACTS</title>
+    <meta name="description" content="Privacy policy for the RIFACTS Google Docs fact-checking add-on." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0B0F1A;
+            --bg-elevated: #111827;
+            --surface: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #F1F5F9;
+            --text-secondary: #94A3B8;
+            --accent: #3B82F6;
+            --purple: #8B5CF6;
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ── Nav ── */
+        nav {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            text-decoration: none;
+        }
+
+        .nav-name {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: 1.5px;
+            text-decoration: none;
+        }
+
+        .nav-name span {
+            color: var(--accent);
+        }
+
+        .nav-back {
+            margin-left: auto;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-back:hover {
+            color: var(--purple);
+        }
+
+        /* ── Content ── */
+        .content {
+            padding: 60px 0 80px;
+        }
+
+        .content h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .content .updated {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .content h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 36px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .content p,
+        .content li {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .content ul {
+            padding-left: 20px;
+            margin-bottom: 16px;
+        }
+
+        .content li {
+            margin-bottom: 6px;
+        }
+
+        .content strong {
+            color: var(--text);
+        }
+
+        .content a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .content a:hover {
+            text-decoration: underline;
+        }
+
+        .highlight-box {
+            padding: 16px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            margin: 20px 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+        }
+
+        /* ── Footer ── */
+        footer {
+            padding: 24px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--text);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="container nav-inner">
+            <a href="index.html" class="nav-logo">🔍</a>
+            <a href="index.html" class="nav-name">RI<span>FACTS</span></a>
+            <a href="index.html" class="nav-back">← Back to Home</a>
+        </div>
+    </nav>
+
+    <main class="content">
+        <div class="container">
+            <h1>Privacy Policy</h1>
+            <p class="updated">Last updated: February 15, 2026</p>
+
+            <div class="highlight-box">
+                <p><strong>In short:</strong> RIFACTS does not collect, store, or transmit any personal data to external
+                    servers. All processing happens within your Google Workspace session.</p>
+            </div>
+
+            <h2>1. What RIFACTS Does</h2>
+            <p>RIFACTS is a Google Docs sidebar add-on that helps investigative journalists fact-check claims by
+                comparing them against evidence stored in Google Drive. It uses the Gemini 2.0 Flash API to analyse the
+                evidence and return scored results.</p>
+
+            <h2>2. Data We Access</h2>
+            <p>When you use RIFACTS, the add-on accesses the following data through Google's OAuth APIs:</p>
+            <ul>
+                <li><strong>Google Docs</strong> — Text you have highlighted in the active document (the claim to
+                    verify)</li>
+                <li><strong>Google Drive</strong> — Files within the folder you select as evidence (documents, PDFs,
+                    spreadsheets, images)</li>
+                <li><strong>Google Sheets</strong> — Spreadsheet content when a Sheet file is part of your evidence
+                    folder</li>
+                <li><strong>YouTube</strong> — Video metadata and captions for YouTube links found within your evidence
+                    files</li>
+            </ul>
+
+            <h2>3. How Data Is Processed</h2>
+            <p>Your highlighted claim and the content of your selected evidence files are sent to the <strong>Google
+                    Gemini 2.0 Flash API</strong> for analysis. This is a direct API call from Google Apps Script to
+                Google's AI infrastructure.</p>
+            <ul>
+                <li>No data is sent to any third-party servers outside of Google</li>
+                <li>No data is logged, cached, or stored by RIFACTS beyond the active session</li>
+                <li>Results are displayed in the sidebar and are not saved unless you copy them</li>
+            </ul>
+
+            <h2>4. Data Storage</h2>
+            <div class="highlight-box">
+                <p><strong>RIFACTS has no backend server and no database.</strong> It runs entirely within Google Apps
+                    Script. Your data never leaves the Google ecosystem.</p>
+            </div>
+            <p>The only stored value is your <strong>Gemini API key</strong>, which is saved in Google Apps Script's
+                built-in Properties Service (private to your Google account).</p>
+
+            <h2>5. Data Sharing</h2>
+            <p>RIFACTS does <strong>not</strong> share, sell, or transmit your data to any third parties. The only
+                external call is to the Google Gemini API, which is governed by <a href="https://ai.google.dev/terms"
+                    target="_blank" rel="noopener">Google's AI Terms of Service</a>.</p>
+
+            <h2>6. Permissions Explained</h2>
+            <p>RIFACTS requests the following OAuth scopes, each for a specific purpose:</p>
+            <ul>
+                <li><strong>auth/documents</strong> — Read the text you highlight in Google Docs</li>
+                <li><strong>auth/drive</strong> — Browse folders and read evidence files (including PDF OCR)</li>
+                <li><strong>auth/spreadsheets</strong> — Extract data from Google Sheets used as evidence</li>
+                <li><strong>auth/youtube.readonly</strong> — Fetch video metadata</li>
+                <li><strong>auth/youtube.force-ssl</strong> — Access video captions/transcripts</li>
+                <li><strong>auth/script.container.ui</strong> — Display the sidebar in Google Docs</li>
+                <li><strong>auth/script.external_request</strong> — Make API calls to Google Gemini</li>
+            </ul>
+
+            <h2>7. Your Rights</h2>
+            <p>You can revoke RIFACTS' access at any time by visiting your <a
+                    href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Google Account
+                    Permissions</a> page. Since no data is stored, there is nothing to delete.</p>
+
+            <h2>8. Changes to This Policy</h2>
+            <p>If we update this privacy policy, the change will be reflected on this page with an updated date.
+                Significant changes will be noted in the project's GitHub repository.</p>
+
+            <h2>9. Contact</h2>
+            <p>For questions about this privacy policy, please open an issue on the <a
+                    href="https://github.com/Aleodor-Tabarcea/fact-checker/issues" target="_blank" rel="noopener">GitHub
+                    repository</a>.</p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="https://github.com/Aleodor-Tabarcea/fact-checker" target="_blank" rel="noopener">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

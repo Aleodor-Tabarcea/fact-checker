@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terms of Service — RIFACTS</title>
+    <meta name="description" content="Terms of service for the RIFACTS Google Docs fact-checking add-on." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0B0F1A;
+            --bg-elevated: #111827;
+            --surface: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #F1F5F9;
+            --text-secondary: #94A3B8;
+            --accent: #3B82F6;
+            --purple: #8B5CF6;
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ── Nav ── */
+        nav {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            text-decoration: none;
+        }
+
+        .nav-name {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: 1.5px;
+            text-decoration: none;
+        }
+
+        .nav-name span {
+            color: var(--accent);
+        }
+
+        .nav-back {
+            margin-left: auto;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-back:hover {
+            color: var(--purple);
+        }
+
+        /* ── Content ── */
+        .content {
+            padding: 60px 0 80px;
+        }
+
+        .content h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .content .updated {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .content h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 36px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .content p,
+        .content li {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .content ul {
+            padding-left: 20px;
+            margin-bottom: 16px;
+        }
+
+        .content li {
+            margin-bottom: 6px;
+        }
+
+        .content strong {
+            color: var(--text);
+        }
+
+        .content a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .content a:hover {
+            text-decoration: underline;
+        }
+
+        .highlight-box {
+            padding: 16px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            margin: 20px 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+        }
+
+        /* ── Footer ── */
+        footer {
+            padding: 24px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--text);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="container nav-inner">
+            <a href="index.html" class="nav-logo">🔍</a>
+            <a href="index.html" class="nav-name">RI<span>FACTS</span></a>
+            <a href="index.html" class="nav-back">← Back to Home</a>
+        </div>
+    </nav>
+
+    <main class="content">
+        <div class="container">
+            <h1>Terms of Service</h1>
+            <p class="updated">Last updated: February 15, 2026</p>
+
+            <div class="highlight-box">
+                <p><strong>Summary:</strong> RIFACTS is free, open-source software provided as-is under the MIT License.
+                    It is a tool to assist research — not a substitute for professional fact-checking or legal advice.
+                </p>
+            </div>
+
+            <h2>1. Acceptance of Terms</h2>
+            <p>By installing or using RIFACTS ("the Add-on"), you agree to these Terms of Service. If you do not agree,
+                do not use the Add-on.</p>
+
+            <h2>2. Description of Service</h2>
+            <p>RIFACTS is a Google Docs sidebar add-on that helps users compare text claims against evidence stored in
+                Google Drive. The Add-on uses the Google Gemini 2.0 Flash API to perform AI-based analysis and return
+                scored results.</p>
+
+            <h2>3. Eligibility</h2>
+            <p>You must have a Google Workspace or Google account to use RIFACTS. You are responsible for maintaining
+                the security of your account and your Gemini API key.</p>
+
+            <h2>4. Acceptable Use</h2>
+            <p>You agree to use RIFACTS only for lawful purposes. Specifically, you agree <strong>not</strong> to:</p>
+            <ul>
+                <li>Use the Add-on to process data you do not have the right to access</li>
+                <li>Attempt to circumvent any Google API rate limits or usage policies</li>
+                <li>Redistribute the Add-on under a different name without attribution</li>
+                <li>Use the Add-on for any purpose that violates applicable laws</li>
+            </ul>
+
+            <h2>5. Intellectual Property</h2>
+            <p>RIFACTS is released under the <a
+                    href="https://github.com/Aleodor-Tabarcea/fact-checker/blob/main/LICENSE" target="_blank"
+                    rel="noopener">MIT License</a>. You are free to use, modify, and distribute the software in
+                accordance with the terms of that license.</p>
+
+            <h2>6. Disclaimer of Warranties</h2>
+            <div class="highlight-box">
+                <p>RIFACTS is provided <strong>"as is"</strong> without warranty of any kind, express or implied. The
+                    AI-generated scores and analysis are <strong>not a substitute for human editorial judgment,
+                        professional fact-checking, or legal advice</strong>.</p>
+            </div>
+            <p>We make no representations about the accuracy, reliability, or completeness of the AI-generated results.
+                Always verify findings through independent sources before publishing.</p>
+
+            <h2>7. Limitation of Liability</h2>
+            <p>To the maximum extent permitted by applicable law, the authors and contributors of RIFACTS shall not be
+                liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits
+                or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other
+                intangible losses resulting from:</p>
+            <ul>
+                <li>Your use of or inability to use the Add-on</li>
+                <li>Any errors, inaccuracies, or omissions in the AI-generated analysis</li>
+                <li>Unauthorized access to your data through your Google account</li>
+                <li>Any third-party services (Google APIs, Gemini API) used by the Add-on</li>
+            </ul>
+
+            <h2>8. Third-Party Services</h2>
+            <p>RIFACTS relies on Google APIs and the Google Gemini API. Your use of these services is subject to their
+                respective terms:</p>
+            <ul>
+                <li><a href="https://developers.google.com/terms" target="_blank" rel="noopener">Google APIs Terms of
+                        Service</a></li>
+                <li><a href="https://ai.google.dev/terms" target="_blank" rel="noopener">Google AI Terms of Service</a>
+                </li>
+            </ul>
+
+            <h2>9. Modifications to Terms</h2>
+            <p>We reserve the right to modify these Terms at any time. Changes will be posted to this page with an
+                updated date. Continued use of the Add-on after changes constitutes acceptance of the new Terms.</p>
+
+            <h2>10. Termination</h2>
+            <p>You may stop using RIFACTS at any time by removing the Add-on from your Google Docs. You can revoke its
+                permissions from your <a href="https://myaccount.google.com/permissions" target="_blank"
+                    rel="noopener">Google Account Permissions</a> page.</p>
+
+            <h2>11. Governing Law</h2>
+            <p>These Terms are governed by the laws of Romania, without regard to conflict of law provisions.</p>
+
+            <h2>12. Contact</h2>
+            <p>For questions about these Terms, please open an issue on the <a
+                    href="https://github.com/Aleodor-Tabarcea/fact-checker/issues" target="_blank" rel="noopener">GitHub
+                    repository</a>.</p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="https://github.com/Aleodor-Tabarcea/fact-checker" target="_blank" rel="noopener">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
