@@ -37,11 +37,38 @@ function searchFolders(query) {
   return folders;
 }
 
+/**
+ * Drive API copy with ocr:true → temporary Google Doc (supported: PDF, PNG, JPEG, GIF per Google).
+ */
+function extractTextViaDriveOcr_(sourceFileId, titleHint) {
+  const safe = String(titleHint || "file")
+    .replace(/[\[\]]/g, "")
+    .substring(0, 60);
+  const tempDoc = DriveAPIConnector.Files.copy(
+    { title: "Temp_OCR_" + safe + "_" + sourceFileId },
+    sourceFileId,
+    { ocr: true }
+  );
+  try {
+    return DocumentApp.openById(tempDoc.id).getBody().getText();
+  } finally {
+    try {
+      DriveAPIConnector.Files.remove(tempDoc.id);
+    } catch (ignore) {}
+  }
+}
+
 function getFolderEvidence(folderId) {
   const evidence = [];
   const scannedFiles = [];
 
-  const query = `'${folderId}' in parents and (mimeType='application/vnd.google-apps.document' or mimeType='application/pdf' or mimeType='application/vnd.google-apps.spreadsheet') and trashed=false`;
+  const query =
+    `'${folderId}' in parents and trashed=false and (` +
+    `mimeType='application/vnd.google-apps.document' or ` +
+    `mimeType='application/pdf' or ` +
+    `mimeType='application/vnd.google-apps.spreadsheet' or ` +
+    `mimeType='image/png' or mimeType='image/jpeg' or mimeType='image/gif'` +
+    `)`;
 
   const response = DriveAPIConnector.Files.list({
     q: query,
@@ -59,12 +86,15 @@ function getFolderEvidence(folderId) {
         textContent = DocumentApp.openById(file.id).getBody().getText();
         scannedFiles.push("📄 " + file.title);
       }
-      // Route 2: PDFs (OCR Backend)
-      else if (file.mimeType === 'application/pdf') {
-        const tempDoc = DriveAPIConnector.Files.copy({ title: "Temp_OCR_" + file.id }, file.id, { ocr: true });
-        textContent = DocumentApp.openById(tempDoc.id).getBody().getText();
-        DriveAPIConnector.Files.remove(tempDoc.id);
-        scannedFiles.push("📑 " + file.title);
+      // Route 2: PDF + images (Drive OCR → temp Doc)
+      else if (
+        file.mimeType === "application/pdf" ||
+        file.mimeType === "image/png" ||
+        file.mimeType === "image/jpeg" ||
+        file.mimeType === "image/gif"
+      ) {
+        textContent = extractTextViaDriveOcr_(file.id, file.title);
+        scannedFiles.push((file.mimeType === "application/pdf" ? "📑 " : "🖼️ ") + file.title);
       }
       // Route 3: Google Sheets
       else if (file.mimeType === 'application/vnd.google-apps.spreadsheet') {
