@@ -44,7 +44,6 @@
             padding: 0 24px;
         }
 
-        /* ── Nav ── */
         nav {
             padding: 20px 0;
             border-bottom: 1px solid var(--border);
@@ -93,7 +92,6 @@
             color: var(--purple);
         }
 
-        /* ── Content ── */
         .content {
             padding: 60px 0 80px;
         }
@@ -163,7 +161,38 @@
             margin-bottom: 0;
         }
 
-        /* ── Footer ── */
+        .scope-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 13px;
+        }
+
+        .scope-table th,
+        .scope-table td {
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .scope-table th {
+            color: var(--text);
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .scope-table td {
+            color: var(--text-secondary);
+        }
+
+        .scope-table td:first-child {
+            color: var(--text);
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 12px;
+        }
+
         footer {
             padding: 24px 0;
             border-top: 1px solid var(--border);
@@ -195,88 +224,171 @@
 
     <nav>
         <div class="container nav-inner">
-            <a href="index.html" class="nav-logo">🔍</a>
+            <a href="index.html" class="nav-logo">&#x1F50D;</a>
             <a href="index.html" class="nav-name">RI<span>FACTS</span></a>
-            <a href="index.html" class="nav-back">← Back to Home</a>
+            <a href="index.html" class="nav-back">&larr; Back to Home</a>
         </div>
     </nav>
 
     <main class="content">
         <div class="container">
             <h1>Privacy Policy</h1>
-            <p class="updated">Last updated: February 15, 2026</p>
+            <p class="updated">Last updated: March 30, 2026</p>
 
             <div class="highlight-box">
                 <p><strong>In short:</strong> RIFACTS does not collect, store, or transmit any personal data to external
-                    servers. All processing happens within your Google Workspace session.</p>
+                    servers. It has no backend, no database, and no analytics. All processing happens within your Google
+                    Workspace session and Google's own AI infrastructure.</p>
             </div>
 
-            <h2>1. What RIFACTS Does</h2>
-            <p>RIFACTS is a Google Docs sidebar add-on that helps investigative journalists fact-check claims by
-                comparing them against evidence stored in Google Drive. It uses the Gemini 2.0 Flash API to analyse the
-                evidence and return scored results.</p>
+            <h2>1. Who We Are</h2>
+            <p>RIFACTS is an open-source Google Docs sidebar add-on developed by Aleodor Tabarcea ("the Developer"),
+                distributed under the MIT License. The Developer acts as the provider of the software. You, the user,
+                remain the sole data controller of any content processed through RIFACTS.</p>
+            <p>The Developer does not operate any servers, APIs, or infrastructure on behalf of RIFACTS. The add-on
+                runs entirely within Google's Apps Script runtime environment, under your Google account.</p>
 
-            <h2>2. Data We Access</h2>
-            <p>When you use RIFACTS, the add-on accesses the following data through Google's OAuth APIs:</p>
+            <h2>2. What RIFACTS Does</h2>
+            <p>RIFACTS helps investigative journalists fact-check claims by comparing highlighted text in a Google Doc
+                against evidence files stored in Google Drive. It uses the Google Gemini API to analyse evidence and
+                return scored results with quoted passages.</p>
+
+            <h2>3. Data We Access</h2>
+            <p>When you use RIFACTS, the add-on reads the following data through Google's OAuth APIs, only during your
+                active session and only upon your explicit action (clicking "Verify"):</p>
             <ul>
-                <li><strong>Google Docs</strong> — Text you have highlighted in the active document (the claim to
-                    verify)</li>
-                <li><strong>Google Drive</strong> — Files within the folder you select as evidence (documents, PDFs,
-                    spreadsheets, images)</li>
-                <li><strong>Google Sheets</strong> — Spreadsheet content when a Sheet file is part of your evidence
-                    folder</li>
-                <li><strong>YouTube</strong> — Video metadata and captions for YouTube links found within your evidence
-                    files</li>
+                <li><strong>Google Docs</strong> &mdash; The text you have highlighted in the currently open document
+                    (the claim to verify). RIFACTS can only read the document it is opened in, not any other document
+                    in your account.</li>
+                <li><strong>Google Drive</strong> &mdash; Files within the specific folder you select as evidence
+                    (Google Docs, PDFs, and Spreadsheets). RIFACTS has read-only access and cannot create, modify, or
+                    delete any files in your Drive.</li>
+                <li><strong>Google Sheets</strong> &mdash; Cell content from spreadsheet files within your selected
+                    evidence folder. Read-only access.</li>
+                <li><strong>YouTube</strong> &mdash; Video metadata (title, description) for YouTube URLs you provide
+                    or that appear in your evidence files. Transcripts are fetched from YouTube's public page data.</li>
             </ul>
 
-            <h2>3. How Data Is Processed</h2>
-            <p>Your highlighted claim and the content of your selected evidence files are sent to the <strong>Google
-                    Gemini 2.0 Flash API</strong> for analysis. This is a direct API call from Google Apps Script to
-                Google's AI infrastructure.</p>
+            <h2>4. How Data Is Processed</h2>
+            <p>Your highlighted claim text and the content of your selected evidence files are sent directly from
+                Google's Apps Script runtime to the <strong>Google Gemini API</strong> for analysis. This is a
+                server-to-server call within Google's infrastructure, authenticated with your personal API key.</p>
             <ul>
-                <li>No data is sent to any third-party servers outside of Google</li>
-                <li>No data is logged, cached, or stored by RIFACTS beyond the active session</li>
-                <li>Results are displayed in the sidebar and are not saved unless you copy them</li>
+                <li>No data passes through any server owned or operated by the Developer</li>
+                <li>No data is sent to any third party outside of Google</li>
+                <li>No data is logged, cached, indexed, or stored by RIFACTS beyond the active browser session</li>
+                <li>Analysis results are displayed in the sidebar and exist only in browser memory &mdash; they are
+                    not saved unless you manually copy them</li>
             </ul>
 
-            <h2>4. Data Storage</h2>
+            <h2>5. Data Storage</h2>
             <div class="highlight-box">
-                <p><strong>RIFACTS has no backend server and no database.</strong> It runs entirely within Google Apps
-                    Script. Your data never leaves the Google ecosystem.</p>
+                <p><strong>RIFACTS has no backend server, no database, no file storage, and no logging
+                        infrastructure.</strong> It is a client-side add-on that runs entirely within Google's Apps
+                    Script environment. Your data never leaves the Google ecosystem.</p>
             </div>
-            <p>The only stored value is your <strong>Gemini API key</strong>, which is saved in Google Apps Script's
-                built-in Properties Service (private to your Google account).</p>
+            <p>The only persistent value is your <strong>Gemini API key</strong>, stored in Google Apps Script's
+                built-in <a href="https://developers.google.com/apps-script/reference/properties"
+                target="_blank" rel="noopener">Properties Service</a>,
+                which is private to your Google account and inaccessible to the Developer or any other user.</p>
 
-            <h2>5. Data Sharing</h2>
-            <p>RIFACTS does <strong>not</strong> share, sell, or transmit your data to any third parties. The only
-                external call is to the Google Gemini API, which is governed by <a href="https://ai.google.dev/terms"
-                    target="_blank" rel="noopener">Google's AI Terms of Service</a>.</p>
+            <h2>6. Data Sharing</h2>
+            <p>RIFACTS does <strong>not</strong> share, sell, rent, license, or otherwise disclose your data to any
+                third parties. The Developer has no access to your data at any point.</p>
+            <p>The only external service called is the Google Gemini API, using your own API key. Your use of Gemini
+                is governed by <a href="https://ai.google.dev/terms" target="_blank" rel="noopener">Google's
+                Generative AI Terms of Service</a> and the
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a>.
+            </p>
 
-            <h2>6. Permissions Explained</h2>
-            <p>RIFACTS requests the following OAuth scopes, each for a specific purpose:</p>
+            <h2>7. Cookies and Tracking</h2>
+            <p>RIFACTS does <strong>not</strong> use cookies, local storage, session storage, tracking pixels,
+                analytics scripts, or any other tracking mechanism. There is no telemetry of any kind. The Developer
+                has no way to know who is using the add-on, how often, or for what purpose.</p>
+
+            <h2>8. OAuth Permissions (Scopes)</h2>
+            <p>RIFACTS requests the minimum OAuth scopes necessary for its functionality:</p>
+            <table class="scope-table">
+                <thead>
+                    <tr>
+                        <th>Scope</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>documents.currentonly</td>
+                        <td>Read highlighted text in the currently open Google Doc only</td>
+                    </tr>
+                    <tr>
+                        <td>drive.readonly</td>
+                        <td>Browse folders and read evidence files (read-only, cannot modify your Drive)</td>
+                    </tr>
+                    <tr>
+                        <td>spreadsheets.readonly</td>
+                        <td>Read spreadsheet data used as evidence (read-only)</td>
+                    </tr>
+                    <tr>
+                        <td>youtube.readonly</td>
+                        <td>Fetch video titles and descriptions for YouTube evidence</td>
+                    </tr>
+                    <tr>
+                        <td>script.container.ui</td>
+                        <td>Display the sidebar inside Google Docs</td>
+                    </tr>
+                    <tr>
+                        <td>script.external_request</td>
+                        <td>Call the Google Gemini API with your API key</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>RIFACTS does not request write access to your documents, Drive, or spreadsheets. It cannot modify,
+                delete, or create any files in your Google account.</p>
+
+            <h2>9. Children's Privacy</h2>
+            <p>RIFACTS is not intended for use by individuals under the age of 16. The Developer does not knowingly
+                process data from minors. If you are under 16, do not use this add-on.</p>
+
+            <h2>10. Your Rights Under GDPR</h2>
+            <p>If you are located in the European Economic Area (EEA), you have the following rights under the General
+                Data Protection Regulation (GDPR):</p>
             <ul>
-                <li><strong>auth/documents</strong> — Read the text you highlight in Google Docs</li>
-                <li><strong>auth/drive</strong> — Browse folders and read evidence files (including PDF OCR)</li>
-                <li><strong>auth/spreadsheets</strong> — Extract data from Google Sheets used as evidence</li>
-                <li><strong>auth/youtube.readonly</strong> — Fetch video metadata</li>
-                <li><strong>auth/youtube.force-ssl</strong> — Access video captions/transcripts</li>
-                <li><strong>auth/script.container.ui</strong> — Display the sidebar in Google Docs</li>
-                <li><strong>auth/script.external_request</strong> — Make API calls to Google Gemini</li>
+                <li><strong>Right of access</strong> &mdash; RIFACTS stores no personal data beyond your API key in
+                    your own Google account. There is nothing for the Developer to provide.</li>
+                <li><strong>Right to erasure</strong> &mdash; You can delete your API key by clearing it in the
+                    RIFACTS settings screen. You can revoke all permissions from your
+                    <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Google Account
+                    Permissions</a> page.</li>
+                <li><strong>Right to restriction / objection</strong> &mdash; You can stop using RIFACTS at any time.
+                    No data persists after your session ends.</li>
+                <li><strong>Data portability</strong> &mdash; Not applicable, as no personal data is stored.</li>
             </ul>
+            <p>Since the Developer does not collect or store any personal data, there is no data processing agreement
+                required. You remain the sole controller of all content processed through the add-on.</p>
 
-            <h2>7. Your Rights</h2>
-            <p>You can revoke RIFACTS' access at any time by visiting your <a
-                    href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Google Account
-                    Permissions</a> page. Since no data is stored, there is nothing to delete.</p>
+            <h2>11. Security</h2>
+            <p>RIFACTS relies on Google's security infrastructure for all data handling. Your API key is stored using
+                Google's Properties Service, which is encrypted at rest and accessible only to your Google account.
+                All API calls use HTTPS. The source code is publicly auditable on
+                <a href="https://github.com/Aleodor-Tabarcea/fact-checker" target="_blank" rel="noopener">GitHub</a>.
+            </p>
 
-            <h2>8. Changes to This Policy</h2>
-            <p>If we update this privacy policy, the change will be reflected on this page with an updated date.
-                Significant changes will be noted in the project's GitHub repository.</p>
+            <h2>12. Data Breach Notification</h2>
+            <p>Because RIFACTS has no server infrastructure and stores no user data, a data breach originating from
+                RIFACTS is not technically possible. If a vulnerability is discovered in the source code, the Developer
+                will publish a fix on GitHub and, where feasible, notify affected users through the repository's
+                release notes and issue tracker.</p>
 
-            <h2>9. Contact</h2>
-            <p>For questions about this privacy policy, please open an issue on the <a
-                    href="https://github.com/Aleodor-Tabarcea/fact-checker/issues" target="_blank" rel="noopener">GitHub
-                    repository</a>.</p>
+            <h2>13. Changes to This Policy</h2>
+            <p>If this policy is updated, the change will be reflected on this page with an updated date. Material
+                changes will be documented in the project's GitHub repository. Continued use of the add-on after
+                changes constitutes acceptance of the revised policy.</p>
+
+            <h2>14. Contact</h2>
+            <p>For questions about this privacy policy or to exercise your data rights, please open an issue on the
+                <a href="https://github.com/Aleodor-Tabarcea/fact-checker/issues" target="_blank"
+                    rel="noopener">GitHub repository</a>.
+            </p>
         </div>
     </main>
 

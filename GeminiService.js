@@ -17,7 +17,13 @@ function callGeminiMultimodal(claim, evidenceList) {
   }];
 
   evidenceList.forEach((item, index) => {
-    promptParts.push({ text: `\n\n[EVIDENCE ${index + 1}] (Title: ${item.title})\nContent: ${item.content}` });
+    if (item.type === "pdf") {
+      // Send PDF as inline binary data for native Gemini processing
+      promptParts.push({ text: `\n\n[EVIDENCE ${index + 1}] (Title: ${item.title}) — PDF document attached below:` });
+      promptParts.push({ inlineData: { mimeType: "application/pdf", data: item.content } });
+    } else {
+      promptParts.push({ text: `\n\n[EVIDENCE ${index + 1}] (Title: ${item.title})\nContent: ${item.content}` });
+    }
   });
 
   promptParts.push({ text: "\nOutput JSON only." });

@@ -44,7 +44,6 @@
             padding: 0 24px;
         }
 
-        /* ── Nav ── */
         nav {
             padding: 20px 0;
             border-bottom: 1px solid var(--border);
@@ -93,7 +92,6 @@
             color: var(--purple);
         }
 
-        /* ── Content ── */
         .content {
             padding: 60px 0 80px;
         }
@@ -128,7 +126,8 @@
             margin-bottom: 12px;
         }
 
-        .content ul {
+        .content ul,
+        .content ol {
             padding-left: 20px;
             margin-bottom: 16px;
         }
@@ -163,7 +162,19 @@
             margin-bottom: 0;
         }
 
-        /* ── Footer ── */
+        .warning-box {
+            padding: 16px 20px;
+            background: rgba(239, 68, 68, 0.06);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            border-left: 3px solid #EF4444;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            margin: 20px 0;
+        }
+
+        .warning-box p {
+            margin-bottom: 0;
+        }
+
         footer {
             padding: 24px 0;
             border-top: 1px solid var(--border);
@@ -195,98 +206,188 @@
 
     <nav>
         <div class="container nav-inner">
-            <a href="index.html" class="nav-logo">🔍</a>
+            <a href="index.html" class="nav-logo">&#x1F50D;</a>
             <a href="index.html" class="nav-name">RI<span>FACTS</span></a>
-            <a href="index.html" class="nav-back">← Back to Home</a>
+            <a href="index.html" class="nav-back">&larr; Back to Home</a>
         </div>
     </nav>
 
     <main class="content">
         <div class="container">
             <h1>Terms of Service</h1>
-            <p class="updated">Last updated: February 15, 2026</p>
+            <p class="updated">Last updated: March 30, 2026</p>
 
             <div class="highlight-box">
-                <p><strong>Summary:</strong> RIFACTS is free, open-source software provided as-is under the MIT License.
-                    It is a tool to assist research — not a substitute for professional fact-checking or legal advice.
-                </p>
+                <p><strong>Summary:</strong> RIFACTS is free, open-source software provided "as is" under the MIT
+                    License. It is a research-assistance tool &mdash; not a substitute for professional fact-checking,
+                    editorial judgment, or legal advice. You are solely responsible for verifying any output before
+                    publication.</p>
             </div>
 
             <h2>1. Acceptance of Terms</h2>
-            <p>By installing or using RIFACTS ("the Add-on"), you agree to these Terms of Service. If you do not agree,
-                do not use the Add-on.</p>
+            <p>By installing, deploying, or using RIFACTS ("the Add-on"), you agree to be bound by these Terms of
+                Service ("Terms"). If you do not agree to all of these Terms, you must not use the Add-on. These
+                Terms constitute a legally binding agreement between you ("User") and Aleodor Tabarcea
+                ("the Developer").</p>
 
             <h2>2. Description of Service</h2>
-            <p>RIFACTS is a Google Docs sidebar add-on that helps users compare text claims against evidence stored in
-                Google Drive. The Add-on uses the Google Gemini 2.0 Flash API to perform AI-based analysis and return
-                scored results.</p>
+            <p>RIFACTS is a Google Docs sidebar add-on that assists users in comparing text claims against evidence
+                files stored in Google Drive. The Add-on uses the Google Gemini API to perform AI-based analysis and
+                return scored results with quoted passages.</p>
+            <p>RIFACTS is a <strong>research-assistance tool</strong> designed to help journalists locate relevant
+                passages in their own evidence files. It does not independently verify facts, access external
+                databases, or provide authoritative determinations of truth or falsehood.</p>
 
             <h2>3. Eligibility</h2>
-            <p>You must have a Google Workspace or Google account to use RIFACTS. You are responsible for maintaining
-                the security of your account and your Gemini API key.</p>
+            <p>You must be at least 16 years of age and have a valid Google account to use RIFACTS. You are
+                responsible for maintaining the security of your Google account and your Gemini API key. The Developer
+                is not liable for any unauthorized use of your account or API key.</p>
 
-            <h2>4. Acceptable Use</h2>
-            <p>You agree to use RIFACTS only for lawful purposes. Specifically, you agree <strong>not</strong> to:</p>
+            <h2>4. Your Responsibilities</h2>
+            <p>You agree to:</p>
+            <ul>
+                <li>Use RIFACTS only for lawful purposes and in compliance with all applicable laws and regulations</li>
+                <li>Only process data that you have the legal right to access and analyse</li>
+                <li>Independently verify all AI-generated results before relying on them for publication, legal
+                    proceedings, or any other consequential purpose</li>
+                <li>Maintain the confidentiality and security of your Gemini API key</li>
+                <li>Comply with Google's <a href="https://developers.google.com/terms" target="_blank"
+                    rel="noopener">APIs Terms of Service</a> and
+                    <a href="https://ai.google.dev/terms" target="_blank" rel="noopener">Generative AI Terms</a></li>
+            </ul>
+            <p>You agree <strong>not</strong> to:</p>
             <ul>
                 <li>Use the Add-on to process data you do not have the right to access</li>
                 <li>Attempt to circumvent any Google API rate limits or usage policies</li>
                 <li>Redistribute the Add-on under a different name without attribution</li>
-                <li>Use the Add-on for any purpose that violates applicable laws</li>
+                <li>Use the Add-on to generate content intended to deceive, mislead, or defraud</li>
+                <li>Reverse-engineer the Add-on for the purpose of building a competing commercial product</li>
+                <li>Use the Add-on in any way that violates the rights of third parties</li>
             </ul>
 
-            <h2>5. Intellectual Property</h2>
+            <h2>5. AI Output Disclaimer</h2>
+            <div class="warning-box">
+                <p><strong>AI-generated scores, quotes, and analysis are not authoritative.</strong> They are
+                    computational approximations produced by a large language model. Results may contain
+                    hallucinations, misattributions, incorrect scores, fabricated quotes, or other errors. You must
+                    always verify AI output against the original source documents before relying on it.</p>
+            </div>
+            <p>The confidence scores (0&ndash;100) produced by RIFACTS represent the AI model's estimated relevance,
+                not a factual accuracy determination. A high score does not mean a claim is true; a low score does not
+                mean it is false. The Developer makes no representations about the accuracy, completeness, or
+                reliability of AI-generated output.</p>
+
+            <h2>6. Intellectual Property</h2>
             <p>RIFACTS is released under the <a
                     href="https://github.com/Aleodor-Tabarcea/fact-checker/blob/main/LICENSE" target="_blank"
-                    rel="noopener">MIT License</a>. You are free to use, modify, and distribute the software in
-                accordance with the terms of that license.</p>
+                    rel="noopener">MIT License</a>. You are free to use, copy, modify, merge, publish, distribute,
+                sublicense, and/or sell copies of the software, subject to the conditions of that license, including
+                the requirement to include the original copyright notice and permission notice.</p>
+            <p>The RIFACTS name and logo are trademarks of the Developer. The MIT License does not grant permission
+                to use these trademarks in a way that suggests endorsement or affiliation.</p>
 
-            <h2>6. Disclaimer of Warranties</h2>
-            <div class="highlight-box">
-                <p>RIFACTS is provided <strong>"as is"</strong> without warranty of any kind, express or implied. The
-                    AI-generated scores and analysis are <strong>not a substitute for human editorial judgment,
-                        professional fact-checking, or legal advice</strong>.</p>
+            <h2>7. Disclaimer of Warranties</h2>
+            <div class="warning-box">
+                <p>RIFACTS is provided <strong>"AS IS" and "AS AVAILABLE"</strong>, without warranty of any kind,
+                    express or implied, including but not limited to the warranties of merchantability, fitness for a
+                    particular purpose, accuracy, and non-infringement. The entire risk as to the quality and
+                    performance of the Add-on is with you.</p>
             </div>
-            <p>We make no representations about the accuracy, reliability, or completeness of the AI-generated results.
-                Always verify findings through independent sources before publishing.</p>
-
-            <h2>7. Limitation of Liability</h2>
-            <p>To the maximum extent permitted by applicable law, the authors and contributors of RIFACTS shall not be
-                liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits
-                or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other
-                intangible losses resulting from:</p>
+            <p>Without limiting the foregoing, the Developer does not warrant that:</p>
             <ul>
-                <li>Your use of or inability to use the Add-on</li>
-                <li>Any errors, inaccuracies, or omissions in the AI-generated analysis</li>
-                <li>Unauthorized access to your data through your Google account</li>
-                <li>Any third-party services (Google APIs, Gemini API) used by the Add-on</li>
+                <li>The Add-on will meet your specific requirements</li>
+                <li>The Add-on will be uninterrupted, timely, secure, or error-free</li>
+                <li>The results obtained from the Add-on will be accurate, complete, or reliable</li>
+                <li>Any errors in the Add-on will be corrected</li>
+                <li>The Add-on will be compatible with future versions of Google Workspace, Google APIs, or the
+                    Gemini API</li>
             </ul>
 
-            <h2>8. Third-Party Services</h2>
-            <p>RIFACTS relies on Google APIs and the Google Gemini API. Your use of these services is subject to their
-                respective terms:</p>
+            <h2>8. Limitation of Liability</h2>
+            <p>To the maximum extent permitted by applicable law, in no event shall the Developer, contributors, or
+                any affiliated parties be liable for any of the following, whether based on warranty, contract, tort
+                (including negligence), strict liability, or any other legal theory:</p>
+            <ul>
+                <li>Any indirect, incidental, special, consequential, exemplary, or punitive damages</li>
+                <li>Any loss of profits, revenue, data, goodwill, or other intangible losses</li>
+                <li>Any damages arising from your use of or inability to use the Add-on</li>
+                <li>Any damages arising from errors, inaccuracies, or omissions in AI-generated analysis</li>
+                <li>Any damages arising from unauthorized access to your data through your Google account</li>
+                <li>Any damages arising from the conduct of any third party, including Google</li>
+                <li>Any damages arising from content or information published or broadcast by you based on the
+                    Add-on's output</li>
+            </ul>
+            <p>In jurisdictions that do not allow the exclusion or limitation of liability for consequential or
+                incidental damages, the Developer's liability shall be limited to the maximum extent permitted by
+                law. In no event shall the Developer's total aggregate liability exceed zero euros (&euro;0), as
+                RIFACTS is provided free of charge.</p>
+
+            <h2>9. Indemnification</h2>
+            <p>You agree to indemnify, defend, and hold harmless the Developer and any contributors from and against
+                any and all claims, damages, obligations, losses, liabilities, costs, and expenses (including
+                reasonable attorney's fees) arising from:</p>
+            <ul>
+                <li>Your use of the Add-on</li>
+                <li>Your violation of these Terms</li>
+                <li>Your violation of any rights of a third party</li>
+                <li>Any content you process, publish, or distribute using or based on the Add-on's output</li>
+            </ul>
+
+            <h2>10. Third-Party Services</h2>
+            <p>RIFACTS depends on third-party services that are outside the Developer's control. Your use of these
+                services is subject to their respective terms:</p>
             <ul>
                 <li><a href="https://developers.google.com/terms" target="_blank" rel="noopener">Google APIs Terms of
                         Service</a></li>
-                <li><a href="https://ai.google.dev/terms" target="_blank" rel="noopener">Google AI Terms of Service</a>
-                </li>
+                <li><a href="https://ai.google.dev/terms" target="_blank" rel="noopener">Google Generative AI Terms
+                        of Service</a></li>
+                <li><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy
+                        Policy</a></li>
             </ul>
+            <p>The Developer is not responsible for the availability, performance, accuracy, or policies of any
+                third-party service. Changes to Google's APIs, pricing, or terms may affect the functionality of
+                RIFACTS without notice.</p>
 
-            <h2>9. Modifications to Terms</h2>
-            <p>We reserve the right to modify these Terms at any time. Changes will be posted to this page with an
-                updated date. Continued use of the Add-on after changes constitutes acceptance of the new Terms.</p>
+            <h2>11. Force Majeure</h2>
+            <p>The Developer shall not be liable for any failure or delay in performance resulting from causes beyond
+                reasonable control, including but not limited to: acts of God, natural disasters, pandemic, war,
+                terrorism, government actions, changes to third-party APIs or platforms, internet outages, power
+                failures, or any other event beyond the Developer's reasonable control.</p>
 
-            <h2>10. Termination</h2>
-            <p>You may stop using RIFACTS at any time by removing the Add-on from your Google Docs. You can revoke its
-                permissions from your <a href="https://myaccount.google.com/permissions" target="_blank"
-                    rel="noopener">Google Account Permissions</a> page.</p>
+            <h2>12. Modifications to the Add-on and Terms</h2>
+            <p>The Developer reserves the right to modify, suspend, or discontinue the Add-on at any time without
+                notice or liability. The Developer reserves the right to modify these Terms at any time. Changes
+                will be posted to this page with an updated date. Your continued use of the Add-on after any
+                modification constitutes your acceptance of the revised Terms.</p>
 
-            <h2>11. Governing Law</h2>
-            <p>These Terms are governed by the laws of Romania, without regard to conflict of law provisions.</p>
+            <h2>13. Termination</h2>
+            <p>You may stop using RIFACTS at any time by removing the Add-on from your Google Docs. You can revoke
+                all permissions from your <a href="https://myaccount.google.com/permissions" target="_blank"
+                    rel="noopener">Google Account Permissions</a> page. Upon termination, no data remains to be
+                deleted, as RIFACTS stores no user data beyond your locally-stored API key.</p>
 
-            <h2>12. Contact</h2>
-            <p>For questions about these Terms, please open an issue on the <a
-                    href="https://github.com/Aleodor-Tabarcea/fact-checker/issues" target="_blank" rel="noopener">GitHub
-                    repository</a>.</p>
+            <h2>14. Severability</h2>
+            <p>If any provision of these Terms is held to be invalid, illegal, or unenforceable, the remaining
+                provisions shall continue in full force and effect. The invalid provision shall be modified to the
+                minimum extent necessary to make it valid and enforceable while preserving its original intent.</p>
+
+            <h2>15. Entire Agreement</h2>
+            <p>These Terms, together with the <a href="privacy.html">Privacy Policy</a>, constitute the entire
+                agreement between you and the Developer regarding your use of RIFACTS and supersede all prior
+                agreements, understandings, and communications.</p>
+
+            <h2>16. Governing Law and Jurisdiction</h2>
+            <p>These Terms are governed by and construed in accordance with the laws of Romania, without regard to
+                its conflict of law provisions. Any disputes arising out of or in connection with these Terms shall
+                be subject to the exclusive jurisdiction of the courts of Bucharest, Romania.</p>
+            <p>For users within the European Union, nothing in these Terms affects your rights under mandatory
+                consumer protection legislation in your country of residence.</p>
+
+            <h2>17. Contact</h2>
+            <p>For questions about these Terms, please open an issue on the
+                <a href="https://github.com/Aleodor-Tabarcea/fact-checker/issues" target="_blank"
+                    rel="noopener">GitHub repository</a>.
+            </p>
         </div>
     </main>
 

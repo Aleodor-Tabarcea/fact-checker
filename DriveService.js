@@ -54,16 +54,40 @@ function getFolderEvidence(folderId) {
     try {
       let textContent = "";
 
-      // Route 1: Google Docs
+      // Route 1: Google Docs — export as plain text via Drive API (no auth/documents needed)
       if (file.mimeType === 'application/vnd.google-apps.document') {
-        textContent = DocumentApp.openById(file.id).getBody().getText();
+        const exportUrl = "https://www.googleapis.com/drive/v2/files/" + file.id + "/export?mimeType=text/plain";
+        const token = ScriptApp.getOAuthToken();
+        const resp = UrlFetchApp.fetch(exportUrl, {
+          headers: { Authorization: "Bearer " + token },
+          muteHttpExceptions: true
+        });
+        if (resp.getResponseCode() === 200) {
+          textContent = resp.getContentText();
+        }
         scannedFiles.push("📄 " + file.title);
       }
-      // Route 2: PDFs (OCR Backend)
+      // Route 2: PDFs — download and extract text (read-only, no temp file creation)
       else if (file.mimeType === 'application/pdf') {
-        const tempDoc = DriveAPIConnector.Files.copy({ title: "Temp_OCR_" + file.id }, file.id, { ocr: true });
-        textContent = DocumentApp.openById(tempDoc.id).getBody().getText();
-        DriveAPIConnector.Files.remove(tempDoc.id);
+        const downloadUrl = file.downloadUrl || ("https://www.googleapis.com/drive/v2/files/" + file.id + "?alt=media");
+        const token = ScriptApp.getOAuthToken();
+        const resp = UrlFetchApp.fetch(downloadUrl, {
+          headers: { Authorization: "Bearer " + token },
+          muteHttpExceptions: true
+        });
+        if (resp.getResponseCode() === 200) {
+          // Send PDF bytes directly to Gemini for native processing
+          const pdfBytes = resp.getBlob().getBytes();
+          const base64Pdf = Utilities.base64Encode(pdfBytes);
+          evidence.push({
+            type: "pdf",
+            title: file.title,
+            url: file.alternateLink,
+            content: base64Pdf
+          });
+          scannedFiles.push("📑 " + file.title);
+          return; // PDF handled separately as binary
+        }
         scannedFiles.push("📑 " + file.title);
       }
       // Route 3: Google Sheets

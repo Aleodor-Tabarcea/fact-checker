@@ -48,26 +48,7 @@ function hydrateYouTubeContext(rawText) {
 }
 
 function getVideoTranscript_(videoId) {
-  // Method 1: Official Captions API (owned videos only)
-  try {
-    var captionList = YouTubeAPIConnector.Captions.list('snippet', { videoId: videoId });
-    if (captionList.items && captionList.items.length > 0) {
-      var captionId = captionList.items[0].id;
-      var token = ScriptApp.getOAuthToken();
-      var resp = UrlFetchApp.fetch(
-        "https://www.googleapis.com/youtube/v3/captions/" + captionId,
-        { headers: { Authorization: "Bearer " + token }, muteHttpExceptions: true }
-      );
-      if (resp.getResponseCode() === 200) {
-        console.log("🎬 [M1] ✅ Success (owned video)");
-        return resp.getContentText();
-      }
-    }
-  } catch (e) {
-    console.log("🎬 [M1] Skipped: " + e.message);
-  }
-
-  // Fetch the watch page (shared by M2 and M3)
+  // Fetch the watch page (shared by both transcript extraction methods)
   var pageHtml = null;
   try {
     console.log("🎬 Fetching watch page...");
