@@ -37,26 +37,6 @@ function searchFolders(query) {
   return folders;
 }
 
-/**
- * Drive API copy with ocr:true → temporary Google Doc (supported: PDF, PNG, JPEG, GIF per Google).
- */
-function extractTextViaDriveOcr_(sourceFileId, titleHint) {
-  const safe = String(titleHint || "file")
-    .replace(/[\[\]]/g, "")
-    .substring(0, 60);
-  const tempDoc = DriveAPIConnector.Files.copy(
-    { title: "Temp_OCR_" + safe + "_" + sourceFileId },
-    sourceFileId,
-    { ocr: true }
-  );
-  try {
-    return DocumentApp.openById(tempDoc.id).getBody().getText();
-  } finally {
-    try {
-      DriveAPIConnector.Files.remove(tempDoc.id);
-    } catch (ignore) {}
-  }
-}
 
 function getFolderEvidence(folderId) {
   const evidence = [];
@@ -81,19 +61,45 @@ function getFolderEvidence(folderId) {
     try {
       let textContent = "";
 
-      // Route 1: Google Docs
+      // Route 1: Google Docs — export as plain text via Drive API (no auth/documents needed)
       if (file.mimeType === 'application/vnd.google-apps.document') {
-        textContent = DocumentApp.openById(file.id).getBody().getText();
+        const exportUrl = "https://www.googleapis.com/drive/v2/files/" + file.id + "/export?mimeType=text/plain";
+        const token = ScriptApp.getOAuthToken();
+        const resp = UrlFetchApp.fetch(exportUrl, {
+          headers: { Authorization: "Bearer " + token },
+          muteHttpExceptions: true
+        });
+        if (resp.getResponseCode() === 200) {
+          textContent = resp.getContentText();
+        }
         scannedFiles.push("📄 " + file.title);
       }
-      // Route 2: PDF + images (Drive OCR → temp Doc)
+      // Route 2: PDFs + images — download and send as binary to Gemini (read-only, no temp files)
       else if (
         file.mimeType === "application/pdf" ||
         file.mimeType === "image/png" ||
         file.mimeType === "image/jpeg" ||
         file.mimeType === "image/gif"
       ) {
-        textContent = extractTextViaDriveOcr_(file.id, file.title);
+        const downloadUrl = file.downloadUrl || ("https://www.googleapis.com/drive/v2/files/" + file.id + "?alt=media");
+        const token = ScriptApp.getOAuthToken();
+        const resp = UrlFetchApp.fetch(downloadUrl, {
+          headers: { Authorization: "Bearer " + token },
+          muteHttpExceptions: true
+        });
+        if (resp.getResponseCode() === 200) {
+          const blob = resp.getBlob();
+          const base64Data = Utilities.base64Encode(blob.getBytes());
+          evidence.push({
+            type: file.mimeType === "application/pdf" ? "pdf" : "image",
+            mimeType: file.mimeType,
+            title: file.title,
+            url: file.alternateLink,
+            content: base64Data
+          });
+          scannedFiles.push((file.mimeType === "application/pdf" ? "📑 " : "🖼️ ") + file.title);
+          return; // binary evidence handled separately
+        }
         scannedFiles.push((file.mimeType === "application/pdf" ? "📑 " : "🖼️ ") + file.title);
       }
       // Route 3: Google Sheets
