@@ -16,8 +16,11 @@ const selectedChip = document.getElementById('selected-chip');
 const chipName = document.getElementById('chip-name');
 const chipRemove = document.getElementById('chip-remove');
 const runBtn = document.getElementById('run-btn');
+const docScanBtn = document.getElementById('doc-scan-btn');
 const loader = document.getElementById('loader');
 const resultsArea = document.getElementById('results-area');
+const loaderText = document.querySelector('.loader-text');
+const loaderSubtext = document.querySelector('.loader-subtext');
 
 // State
 let selectedFolderId = null;
@@ -38,6 +41,15 @@ window.addEventListener('load', () => {
         hasKeyStored = hasKey;
         if (hasKey) {
           showMainUI();
+          google.script.run
+            .withSuccessHandler(mode => {
+              if (mode === 'full_document') {
+                setTimeout(() => {
+                  if (selectedFolderId || ytUrls.length > 0) docScanBtn.click();
+                }, 500);
+              }
+            })
+            .consumePendingScanMode();
         } else {
           showSetup(false); // first run, no back button
         }
@@ -187,7 +199,7 @@ function selectFolder(id, name) {
   selectedChip.classList.add('active');
   searchResults.classList.remove('active');
   folderSearch.value = '';
-  runBtn.disabled = false;
+  updateRunBtn();
 }
 
 chipRemove.addEventListener('click', () => {
@@ -198,7 +210,9 @@ chipRemove.addEventListener('click', () => {
 });
 
 function updateRunBtn() {
-  runBtn.disabled = !(selectedFolderId || ytUrls.length > 0);
+  const ok = !!(selectedFolderId || ytUrls.length > 0);
+  runBtn.disabled = !ok;
+  docScanBtn.disabled = !ok;
 }
 
 // ── YouTube URL Handling ──
@@ -259,13 +273,16 @@ function renderYtChips() {
   });
 }
 
-// ── Fact Check ──
+// ── Fact Check (selection) ──
 runBtn.addEventListener('click', () => {
   if (!selectedFolderId && ytUrls.length === 0) return;
   runBtn.disabled = true;
+  docScanBtn.disabled = true;
   runBtn.textContent = 'Analyzing…';
   resultsArea.innerHTML = '';
   loader.style.display = 'flex';
+  if (loaderText) loaderText.textContent = 'Analyzing evidence…';
+  if (loaderSubtext) loaderSubtext.textContent = 'Scanning documents against your selection';
 
   if (typeof google !== 'undefined') {
     google.script.run
@@ -278,6 +295,7 @@ runBtn.addEventListener('click', () => {
   } else {
     setTimeout(() => renderResults({
       status: "success",
+      mode: "selection",
       scanned: ["📄 Investigation Notes", "📊 Budget Data", "📑 Ministry Report.pdf"],
       analysis: [
         { doc_title: "Investigation Notes Q3", doc_url: "#", score: 92, snippet: "The minister confirmed the allocation of €2.4M to the infrastructure fund during the July session.", location: "Page 3, Paragraph 2" },
@@ -289,10 +307,62 @@ runBtn.addEventListener('click', () => {
   }
 });
 
+// ── Fact Check (full document, every qualifying paragraph) ──
+docScanBtn.addEventListener('click', () => {
+  if (!selectedFolderId && ytUrls.length === 0) return;
+  runBtn.disabled = true;
+  docScanBtn.disabled = true;
+  docScanBtn.textContent = 'Scanning document…';
+  resultsArea.innerHTML = '';
+  loader.style.display = 'flex';
+  if (loaderText) loaderText.textContent = 'Fact-checking each paragraph…';
+  if (loaderSubtext) loaderSubtext.textContent = 'One Gemini request per paragraph; large docs are capped per run.';
+
+  if (typeof google !== 'undefined') {
+    google.script.run
+      .withSuccessHandler(renderResults)
+      .withFailureHandler(err => {
+        resetUI();
+        renderError(err.message || 'An unexpected error occurred.');
+      })
+      .performDocumentParagraphFactCheck(selectedFolderId, ytUrls.map(y => y.url));
+  } else {
+    setTimeout(() => renderResults({
+      status: "success",
+      mode: "full_document",
+      scanned: ["📄 Investigation Notes"],
+      totalParagraphs: 2,
+      runParagraphs: 2,
+      truncated: false,
+      paragraphs: [
+        {
+          seq: 0,
+          childIndex: 0,
+          preview: "The ministry announced €2.4M in new infrastructure funding in July 2024.",
+          analysis: [
+            { doc_title: "Investigation Notes Q3", doc_url: "#", score: 88, snippet: "€2.4M infrastructure allocation confirmed July session.", location: "p.3" }
+          ]
+        },
+        {
+          seq: 1,
+          childIndex: 2,
+          preview: "No evidence supports the alleged timeline for the rural broadband rollout.",
+          analysis: [
+            { doc_title: "Ministry Press Release", doc_url: "#", score: 15, snippet: "Timeline not specified in official releases.", location: "Section 1" }
+          ]
+        }
+      ]
+    }), 2000);
+  }
+});
+
 function resetUI() {
   loader.style.display = 'none';
   runBtn.disabled = false;
   runBtn.textContent = 'Verify Selected Claim';
+  docScanBtn.disabled = false;
+  docScanBtn.textContent = 'Scan all paragraphs';
+  updateRunBtn();
 }
 
 // ── Semantic Tags ──
@@ -304,11 +374,31 @@ function getAccuracyTag(score) {
   return { label: 'Definitely wrong', cls: 'wrong' };
 }
 
+function bestParagraphScore(analysis) {
+  if (!analysis || !Array.isArray(analysis)) return 0;
+  return analysis.reduce((m, a) => Math.max(m, typeof a.score === 'number' ? a.score : 0), 0);
+}
+
 // ── Render Results ──
 function renderResults(data) {
   resetUI();
 
   if (data.status === 'error') { renderError(data.message || 'Analysis failed.'); return; }
+
+  if (data.mode === 'full_document') {
+    renderFullDocumentResults(data);
+    return;
+  }
+
+  if (data.status === 'no_paragraphs') {
+    resultsArea.innerHTML = `
+      <div class="state-message">
+        <div class="state-icon">📝</div>
+        <div class="state-title">No paragraphs to check</div>
+        <div class="state-desc">${escapeHtml(data.message || '')}</div>
+      </div>`;
+    return;
+  }
 
   if (data.status === 'no_docs') {
     resultsArea.innerHTML = `
@@ -410,6 +500,98 @@ function renderResults(data) {
     });
 
     resultsArea.appendChild(groupEl);
+  });
+}
+
+function renderFullDocumentResults(data) {
+  if (data.scanned && data.scanned.length > 0) {
+    const chips = data.scanned.map(f => `<span class="scanned-chip">${escapeHtml(f)}</span>`).join('');
+    resultsArea.innerHTML = `
+      <div class="scanned-section">
+        <div class="scanned-label">Sources scanned</div>
+        <div class="scanned-list">${chips}</div>
+      </div>`;
+  }
+
+  let meta = `<div class="doc-scan-meta"><strong>Full-document report.</strong> Checked ${data.runParagraphs || 0} paragraph(s)`;
+  if (typeof data.totalParagraphs === 'number' && data.totalParagraphs > (data.runParagraphs || 0)) {
+    meta += ` of ${data.totalParagraphs} qualifying`;
+  }
+  meta += '. ';
+  if (data.truncated) {
+    meta += 'Some paragraphs were skipped this run (per-run cap for Apps Script time limits). Run again after editing, or shorten the doc.';
+  }
+  meta += '</div>';
+  resultsArea.innerHTML += meta;
+
+  const header = document.createElement('div');
+  header.className = 'results-header';
+  header.innerHTML = `
+    <span class="results-title">Per-paragraph results</span>
+    <span class="results-count">${data.paragraphs ? data.paragraphs.length : 0}</span>`;
+  resultsArea.appendChild(header);
+
+  if (!data.paragraphs || data.paragraphs.length === 0) return;
+
+  data.paragraphs.forEach((block, idx) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'para-report';
+    const best = bestParagraphScore(block.analysis);
+    const tag = getAccuracyTag(best);
+
+    const head = document.createElement('div');
+    head.className = 'para-report-header';
+    head.innerHTML = `
+      <span class="para-chevron">▶</span>
+      <div class="para-report-title">
+        <div class="para-num">Paragraph ${block.seq + 1} · body index ${block.childIndex}</div>
+        <div class="para-preview">${escapeHtml(block.preview || '')}</div>
+      </div>
+      <span class="score-badge ${block.error ? 'wrong' : tag.cls}">${block.error ? '!' : best + '%'}</span>`;
+    head.addEventListener('click', () => wrap.classList.toggle('open'));
+
+    const body = document.createElement('div');
+    body.className = 'para-report-body';
+
+    if (block.error) {
+      body.innerHTML = `<div class="para-error">${escapeHtml(block.error)}</div>`;
+    } else if (!block.analysis || block.analysis.length === 0) {
+      body.innerHTML = '<div class="state-desc">No analysis returned.</div>';
+    } else {
+      const relevant = block.analysis.filter(item => item.score > 0);
+      if (relevant.length === 0) {
+        body.innerHTML = '<div class="state-desc">No matching evidence for this paragraph.</div>';
+      } else {
+        relevant.sort((a, b) => b.score - a.score).forEach(item => {
+          const t = getAccuracyTag(item.score);
+          const row = document.createElement('div');
+          row.className = 'score-card open';
+          row.style.marginTop = '8px';
+          const link = item.doc_url
+            ? `<a href="${escapeHtml(item.doc_url)}" target="_blank" class="source-link">Open ↗</a>`
+            : '';
+          row.innerHTML = `
+            <div class="source-header" style="margin-bottom:6px">
+              <span class="source-icon">📄</span>
+              <span class="source-name">${escapeHtml(item.doc_title)}</span>
+              ${link}
+            </div>
+            <div class="card-tags" style="margin-bottom:6px">
+              <span class="score-badge ${t.cls}">${item.score}%</span>
+              <span class="accuracy-tag">${t.label}</span>
+            </div>
+            <blockquote class="card-snippet">"${escapeHtml(item.snippet)}"</blockquote>
+            <div class="card-location">📍 ${escapeHtml(item.location || '')}</div>`;
+          body.appendChild(row);
+        });
+      }
+    }
+
+    wrap.appendChild(head);
+    wrap.appendChild(body);
+    resultsArea.appendChild(wrap);
+
+    if (idx === 0) wrap.classList.add('open');
   });
 }
 

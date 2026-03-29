@@ -11,6 +11,7 @@
 2. **Browse and select a Drive folder** containing your evidence (docs, PDFs, PNG/JPEG/GIF images via OCR, spreadsheets)
 3. **Click "Verify Selected Claim"** — the system scans your files, hydrates YouTube links, and sends everything to Gemini
 4. **Get scored results** — each source document receives a 0-100 match score with exact quotes
+5. **Optional full-document pass** — Use **Scan all paragraphs** in the sidebar (or **Add-ons → RIFACTS → Scan all paragraphs…**) to run the same check on **each body paragraph** (≥25 characters, capped at **35 paragraphs per run** for Apps Script time limits). You get a **per-paragraph report** in the sidebar.
 
 ## Architecture
 
@@ -19,7 +20,7 @@ A decoupled micro-service ETL pipeline running on Google Apps Script:
 | Service | Role |
 |---------|------|
 | `Initialiser.js` | Entry point — menu, sidebar, orchestrator |
-| `DocumentService.js` | Extracts highlighted text from the active Doc |
+| `DocumentService.js` | Highlighted text + enumerates body paragraphs for full-document scan |
 | `DriveService.js` | Folder browser + evidence gathering (Docs, PDFs + images via Drive OCR, Sheets) |
 | `SheetService.js` | Raw spreadsheet extraction via Sheets API v4 |
 | `YouTubeService.js` | Hydration middleware — detects YT links, fetches metadata & captions |
