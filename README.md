@@ -8,9 +8,10 @@
 ## How It Works
 
 1. **Highlight a claim** in a Google Doc
-2. **Browse and select a Drive folder** containing your evidence (docs, PDFs, spreadsheets)
+2. **Browse and select a Drive folder** containing your evidence (docs, PDFs, PNG/JPEG/GIF images via OCR, spreadsheets)
 3. **Click "Verify Selected Claim"** — the system scans your files, hydrates YouTube links, and sends everything to Gemini
 4. **Get scored results** — each source document receives a 0-100 match score with exact quotes
+5. **Optional full-document pass** — Use **Scan all paragraphs** in the sidebar (or **Add-ons → RIFACTS → Scan all paragraphs…**) to run the same check on **each body paragraph** (≥25 characters, capped at **35 paragraphs per run** for Apps Script time limits). You get a **per-paragraph report** in the sidebar.
 
 ## Architecture
 
@@ -19,8 +20,8 @@ A decoupled micro-service ETL pipeline running on Google Apps Script:
 | Service | Role |
 |---------|------|
 | `Initialiser.js` | Entry point — menu, sidebar, orchestrator |
-| `DocumentService.js` | Extracts highlighted text from the active Doc |
-| `DriveService.js` | Folder browser + evidence gathering (Docs, PDFs via OCR, Sheets) |
+| `DocumentService.js` | Highlighted text + enumerates body paragraphs for full-document scan |
+| `DriveService.js` | Folder browser + evidence gathering (Docs, PDFs + images via Drive OCR, Sheets) |
 | `SheetService.js` | Raw spreadsheet extraction via Sheets API v4 |
 | `YouTubeService.js` | Hydration middleware — detects YT links, fetches metadata & captions |
 | `GeminiService.js` | Sends claim + evidence to Gemini 2.0 Flash, returns scored JSON |
@@ -28,7 +29,7 @@ A decoupled micro-service ETL pipeline running on Google Apps Script:
 ### Key Design Decisions
 
 - **Native multimodal** — Images sent as base64 to Gemini instead of lossy text transcription
-- **PDF OCR hack** — Clones PDFs with `{ocr: true}` on Google's backend for instant text extraction
+- **Drive OCR** — Clones PDFs and images (PNG, JPEG, GIF) with `{ocr: true}` into a temp Google Doc for text extraction
 - **No raw video** — Apps Script has a 50MB memory limit; video context comes via YouTube caption-ripping
 - **Lightweight frontend** — Native HTML/CSS/JS (21 KB total) instead of heavy component frameworks
 - **Drive folder browser** — Full navigation of My Drive + Shared folders, not just starred
@@ -65,7 +66,7 @@ npm run dev       # starts Vite dev server with mock data
 | Scope | Purpose |
 |-------|---------|
 | `auth/documents` | Read selected text from Docs |
-| `auth/drive` | Browse folders, read files, OCR PDFs |
+| `auth/drive` | Browse folders, read files, OCR PDFs and images |
 | `auth/spreadsheets` | Extract spreadsheet data |
 | `auth/youtube.readonly` | Video metadata |
 | `auth/youtube.force-ssl` | Caption/transcript access |

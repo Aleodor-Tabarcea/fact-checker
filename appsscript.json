@@ -1,5 +1,25 @@
 {
   "timeZone": "Europe/Bucharest",
+  "addOns": {
+    "common": {
+      "name": "RIFACTS",
+      "logoUrl": "https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png",
+      "layoutProperties": {
+        "primaryColor": "#1d4ed8",
+        "secondaryColor": "#4338ca"
+      },
+      "homepageTrigger": {
+        "runFunction": "buildRifactsAddOnHomepage",
+        "enabled": true
+      }
+    },
+    "docs": {
+      "homepageTrigger": {
+        "runFunction": "buildRifactsAddOnHomepage",
+        "enabled": true
+      }
+    }
+  },
   "dependencies": {
     "enabledAdvancedServices": [
       {

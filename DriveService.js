@@ -37,11 +37,18 @@ function searchFolders(query) {
   return folders;
 }
 
+
 function getFolderEvidence(folderId) {
   const evidence = [];
   const scannedFiles = [];
 
-  const query = `'${folderId}' in parents and (mimeType='application/vnd.google-apps.document' or mimeType='application/pdf' or mimeType='application/vnd.google-apps.spreadsheet') and trashed=false`;
+  const query =
+    `'${folderId}' in parents and trashed=false and (` +
+    `mimeType='application/vnd.google-apps.document' or ` +
+    `mimeType='application/pdf' or ` +
+    `mimeType='application/vnd.google-apps.spreadsheet' or ` +
+    `mimeType='image/png' or mimeType='image/jpeg' or mimeType='image/gif'` +
+    `)`;
 
   const response = DriveAPIConnector.Files.list({
     q: query,
@@ -67,8 +74,13 @@ function getFolderEvidence(folderId) {
         }
         scannedFiles.push("📄 " + file.title);
       }
-      // Route 2: PDFs — download and extract text (read-only, no temp file creation)
-      else if (file.mimeType === 'application/pdf') {
+      // Route 2: PDFs + images — download and send as binary to Gemini (read-only, no temp files)
+      else if (
+        file.mimeType === "application/pdf" ||
+        file.mimeType === "image/png" ||
+        file.mimeType === "image/jpeg" ||
+        file.mimeType === "image/gif"
+      ) {
         const downloadUrl = file.downloadUrl || ("https://www.googleapis.com/drive/v2/files/" + file.id + "?alt=media");
         const token = ScriptApp.getOAuthToken();
         const resp = UrlFetchApp.fetch(downloadUrl, {
@@ -76,19 +88,19 @@ function getFolderEvidence(folderId) {
           muteHttpExceptions: true
         });
         if (resp.getResponseCode() === 200) {
-          // Send PDF bytes directly to Gemini for native processing
-          const pdfBytes = resp.getBlob().getBytes();
-          const base64Pdf = Utilities.base64Encode(pdfBytes);
+          const blob = resp.getBlob();
+          const base64Data = Utilities.base64Encode(blob.getBytes());
           evidence.push({
-            type: "pdf",
+            type: file.mimeType === "application/pdf" ? "pdf" : "image",
+            mimeType: file.mimeType,
             title: file.title,
             url: file.alternateLink,
-            content: base64Pdf
+            content: base64Data
           });
-          scannedFiles.push("📑 " + file.title);
-          return; // PDF handled separately as binary
+          scannedFiles.push((file.mimeType === "application/pdf" ? "📑 " : "🖼️ ") + file.title);
+          return; // binary evidence handled separately
         }
-        scannedFiles.push("📑 " + file.title);
+        scannedFiles.push((file.mimeType === "application/pdf" ? "📑 " : "🖼️ ") + file.title);
       }
       // Route 3: Google Sheets
       else if (file.mimeType === 'application/vnd.google-apps.spreadsheet') {
